@@ -36,7 +36,7 @@ export default function Home() {
 
           {/* Subline */}
           <p className="text-[18px] text-gray-700 max-w-[720px] mx-auto leading-relaxed">
-            A private adversarial filter for high-stakes operators making irreversible decisions.
+            A private adversarial filter for operators making decisions that cannot be undone.
           </p>
 
           {/* Daily Entitlement Line */}
