@@ -1,7 +1,10 @@
 "use client"
 
-export default function StripeCheckoutButton() {
-
+export default function StripeCheckoutButton({
+  label = "SECURE FOUNDING ACCESS",
+}: {
+  label?: string
+}) {
   async function handleCheckout() {
     const res = await fetch("/api/create-checkout", {
       method: "POST",
@@ -17,9 +20,22 @@ export default function StripeCheckoutButton() {
   return (
     <button
       onClick={handleCheckout}
-      className="px-8 py-3 bg-gray-900 text-white text-sm tracking-widest uppercase hover:opacity-90 transition"
+      className="
+        inline-block
+        px-10 py-4
+        bg-[#121212]
+        text-white
+        text-[13px]
+        tracking-[0.2em]
+        uppercase
+        font-medium
+        border border-[#121212]
+        hover:bg-white
+        hover:text-[#121212]
+        transition-opacity duration-200
+      "
     >
-      Initiate Access
+      {label}
     </button>
   )
 }
