@@ -4,9 +4,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-})
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
