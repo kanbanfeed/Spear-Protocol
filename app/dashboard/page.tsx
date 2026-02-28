@@ -1,0 +1,166 @@
+import { cookies } from "next/headers"
+import { prisma } from "@/lib/prisma"
+import Console from "./Console"
+import ReferralCard from "./ReferralCard"
+
+export default async function Dashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ session?: string }>
+}) {
+  // ✅ Unwrap searchParams properly
+  const params = await searchParams
+  const viewingSession = params?.session
+
+  // ✅ Read cookie
+  const cookieStore = await cookies()
+  const email = cookieStore.get("user_email")?.value
+
+  if (!email) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F9]">
+        <p className="text-gray-500">Not authenticated.</p>
+      </div>
+    )
+  }
+
+  // ✅ Fetch user + sessions
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: {
+      sessions: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  })
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F9]">
+        <p className="text-gray-500">User not found.</p>
+      </div>
+    )
+  }
+
+  // 🔽 your existing return UI continues below this
+  return (
+  <div className="min-h-screen bg-[#F9F9F9] md:flex">
+
+    {/* SIDEBAR */}
+    <aside className="md:w-80 w-full md:fixed md:inset-y-0 md:left-0 border-r border-gray-200 bg-white px-8 py-10 overflow-y-auto flex flex-col">
+
+      <div className="flex-1 space-y-14">
+
+        {/* Brand */}
+        <div>
+          <p className="text-xs tracking-[0.45em] text-gray-400">
+            SPEAR PROTOCOL
+          </p>
+          <div className="w-12 h-[2px] bg-gray-900 mt-4" />
+        </div>
+
+        {/* NEW SESSION BUTTON (only when viewing past session) */}
+        {viewingSession && (
+          <a
+            href="/dashboard"
+            className="block w-full text-center py-3 text-xs tracking-[0.35em] uppercase rounded-xl bg-gray-900 text-white hover:opacity-90 transition"
+          >
+            New Session
+          </a>
+        )}
+
+        {/* Past Sessions */}
+        <div>
+          <h2 className="text-xs tracking-[0.35em] text-gray-500 mb-6">
+            PAST SESSIONS
+          </h2>
+
+          <ul className="space-y-4 text-sm text-gray-800">
+            {user.sessions.length === 0 && (
+              <li className="text-gray-400 text-xs">
+                No sessions yet
+              </li>
+            )}
+
+            {user.sessions.map((session) => {
+              const isActive = viewingSession === session.id
+
+              return (
+                <li key={session.id}>
+                  <a
+                    href={`?session=${session.id}`}
+                    className={`block px-3 py-2 rounded-lg transition ${
+                      isActive
+                        ? "bg-gray-100 text-black"
+                        : "hover:bg-gray-50"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>
+                        {new Date(session.createdAt).toLocaleDateString()}
+                      </span>
+                      <span className="text-gray-300">→</span>
+                    </div>
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+
+        {/* REFERRAL SECTION — NOTHING REMOVED */}
+        <div>
+          <h2 className="text-xs tracking-[0.35em] text-gray-500 mb-6">
+            REFERRAL
+          </h2>
+
+          <ReferralCard
+            code={user.referralCode}
+            credit={user.referralCredit}
+          />
+        </div>
+
+      </div>
+
+      {/* FOUR SPOTS */}
+      <div className="pt-10 border-t border-gray-200 mt-10">
+        <h2 className="text-xs tracking-[0.35em] text-gray-500 mb-2">
+          FOUR SPOTS
+        </h2>
+        <p className="text-xs text-gray-400 tracking-wide">
+          COMING SOON
+        </p>
+      </div>
+
+    </aside>
+
+    {/* MAIN PANEL */}
+    <main className="flex-1 md:ml-80 px-6 md:px-20 py-12 overflow-y-auto">
+
+      <div className="max-w-5xl mx-auto">
+
+        <div className="mb-16">
+          <p className="text-xs tracking-[0.45em] text-gray-400 mb-3">
+            SESSION CONSOLE
+          </p>
+
+          <h1 className="text-4xl font-serif text-gray-900">
+            {viewingSession
+              ? "Session Archive"
+              : "Initiate Daily Ritual"}
+          </h1>
+
+          <div className="w-16 h-[2px] bg-gray-900 mt-6" />
+        </div>
+
+        <Console
+          email={email}
+          sessions={user.sessions}
+        />
+
+      </div>
+
+    </main>
+  </div>
+)
+}
