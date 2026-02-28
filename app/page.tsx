@@ -9,7 +9,7 @@ export default function Home() {
       <div className="absolute -top-20 -left-32 w-[500px] h-[500px] bg-gray-200 rounded-full blur-3xl opacity-30" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gray-300 rounded-full blur-3xl opacity-20" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-4">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-14">
 
         {/* HERO SECTION */}
         <div className="grid md:grid-cols-2 gap-16 items-center">
