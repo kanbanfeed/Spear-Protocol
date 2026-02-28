@@ -3,102 +3,95 @@ import StripeCheckoutButton from "@/components/StripeCheckoutButton"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#F9F9F9] text-gray-900">
+    <main className="min-h-screen bg-gradient-to-br from-[#f5f5f5] via-white to-[#f0f0f0] relative overflow-hidden">
 
-      {/* HERO */}
-      <section className="max-w-6xl mx-auto px-6 py-24">
+      {/* Subtle Background Accent */}
+      <div className="absolute -top-20 -left-32 w-[500px] h-[500px] bg-gray-200 rounded-full blur-3xl opacity-30" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gray-300 rounded-full blur-3xl opacity-20" />
 
-        <div className="text-center max-w-3xl mx-auto space-y-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-4">
 
-          <p className="text-xs tracking-[0.5em] text-gray-400">
-            FOUNDING COHORT · 90 DAY SYSTEM
-          </p>
+        {/* HERO SECTION */}
+        <div className="grid md:grid-cols-2 gap-16 items-center">
 
-          <h1 className="text-5xl md:text-6xl font-serif leading-tight">
-            Initiate the <br />
-            <span className="border-b-2 border-gray-900">
-              SPEAR Protocol
-            </span>
-          </h1>
+          {/* LEFT SIDE */}
+          <div className="space-y-8">
 
-          <p className="text-lg text-gray-600 leading-relaxed">
-            A structured cognitive re-architecture system for founders
-            navigating pressure, overwhelm, and decision fatigue.
-          </p>
+            <p className="text-xs tracking-[0.5em] text-gray-400">
+              FOUNDING ACCESS
+            </p>
+
+            <h1 className="text-5xl md:text-6xl font-serif text-gray-900 leading-tight">
+              INITIATE <br />
+              <span className="border-b-2 border-gray-900">
+                SPEAR PROTOCOL
+              </span>
+            </h1>
+
+            <p className="text-lg text-gray-600 leading-relaxed max-w-md">
+              A structured 90-day cognitive rearchitecture system 
+              for founders and operators navigating pressure, scale,
+              and internal resistance.
+            </p>
+
+            <div className="flex items-center gap-6">
+              <div>
+                <p className="text-sm text-gray-500">
+                  One-Time Initiation
+                </p>
+                <p className="text-3xl font-semibold text-gray-900">
+                  $99
+                </p>
+              </div>
+
+              <div className="h-10 w-px bg-gray-300" />
+
+              <SeatCounter />
+            </div>
+
+            <div className="pt-6">
+              <StripeCheckoutButton />
+            </div>
+
+          </div>
+
+          {/* RIGHT SIDE CARD */}
+          <div className="bg-white border border-gray-200 rounded-3xl p-10 shadow-xl space-y-6 backdrop-blur-sm">
+
+            <h2 className="text-2xl font-serif text-gray-900">
+              What You Unlock
+            </h2>
+
+            <ul className="space-y-4 text-gray-700 text-[15px] leading-relaxed">
+              <li className="flex gap-3">
+                <span>•</span>
+                <span>Daily structured cognitive breakdown sessions</span>
+              </li>
+              <li className="flex gap-3">
+                <span>•</span>
+                <span>Pressure mapping & decision clarity protocol</span>
+              </li>
+              <li className="flex gap-3">
+                <span>•</span>
+                <span>Kill-point identification framework</span>
+              </li>
+              <li className="flex gap-3">
+                <span>•</span>
+                <span>90-Day Founding Cohort Access</span>
+              </li>
+            </ul>
+
+            <div className="pt-6 border-t border-gray-200">
+              <p className="text-xs text-gray-500 tracking-wide">
+                LIMITED FOUNDING ACCESS
+              </p>
+            </div>
+
+          </div>
 
         </div>
 
-      </section>
-
-      {/* VALUE STRIP */}
-      <section className="border-y border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-12 grid md:grid-cols-3 gap-12 text-center">
-
-          <div>
-            <p className="text-sm tracking-widest text-gray-400 mb-3">
-              DAILY
-            </p>
-            <p className="text-lg font-medium">
-              Structured breakdown sessions
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm tracking-widest text-gray-400 mb-3">
-              CLARITY
-            </p>
-            <p className="text-lg font-medium">
-              Kill-point & pressure mapping
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm tracking-widest text-gray-400 mb-3">
-              ACCOUNTABILITY
-            </p>
-            <p className="text-lg font-medium">
-              90-day founder discipline cycle
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* INITIATION SECTION */}
-      <section className="max-w-4xl mx-auto px-6 py-24">
-
-        <div className="bg-white border border-gray-200 rounded-3xl p-12 shadow-sm text-center space-y-10">
-
-          <div>
-            <p className="text-xs tracking-[0.4em] text-gray-400 mb-4">
-              ONE-TIME INITIATION
-            </p>
-
-            <p className="text-4xl font-serif">$99</p>
-          </div>
-
-          <SeatCounter />
-
-          <div className="pt-6">
-            <StripeCheckoutButton />
-          </div>
-
-          <p className="text-xs text-gray-500 tracking-wide">
-            Access unlocks the full session console, referral system,
-            and 90-day structured protocol.
-          </p>
-
-        </div>
-
-      </section>
-
-      {/* FOOTER NOTE */}
-      <section className="pb-20 text-center text-sm text-gray-400">
-        <p>
-          Built for founders who refuse to operate unconsciously.
-        </p>
-      </section>
-
+      </div>
     </main>
   )
 }
