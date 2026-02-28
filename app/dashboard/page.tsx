@@ -17,12 +17,47 @@ export default async function Dashboard({
   const email = cookieStore.get("user_email")?.value
 
   if (!email) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F9]">
-        <p className="text-gray-500">Not authenticated.</p>
+  return (
+    <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center px-6">
+      <div className="bg-white border border-gray-200 rounded-2xl p-12 w-full max-w-md text-center space-y-8 shadow-sm">
+
+        <div className="space-y-4">
+          <p className="text-xs tracking-[0.4em] text-gray-400">
+            ACCESS SPEAR PROTOCOL
+          </p>
+
+          <h1 className="text-2xl font-serif text-gray-900">
+            Verify Your Access
+          </h1>
+
+          <p className="text-sm text-gray-500">
+            Enter the email used during initiation.
+          </p>
+        </div>
+
+        <form action="/api/auth/verify" method="POST" className="space-y-6">
+
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="you@example.com"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900"
+          />
+
+          <button
+            type="submit"
+            className="w-full py-3 text-xs tracking-[0.3em] uppercase bg-gray-900 text-white rounded-xl hover:opacity-90 transition"
+          >
+            Verify Access
+          </button>
+
+        </form>
+
       </div>
-    )
-  }
+    </div>
+  )
+}
 
   // ✅ Fetch user + sessions
   const user = await prisma.user.findUnique({
@@ -42,7 +77,7 @@ export default async function Dashboard({
     )
   }
 
-  // 🔽 your existing return UI continues below this
+
   return (
   <div className="min-h-screen bg-[#F9F9F9] md:flex">
 

@@ -1,9 +1,20 @@
 import SeatCounter from "@/components/SeatCounter"
 import StripeCheckoutButton from "@/components/StripeCheckoutButton"
+import Link from "next/link"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#f5f5f5] via-white to-[#f0f0f0] relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-[#f5f5F5] via-white to-[#f0f0f0] relative overflow-hidden">
+
+      {/* 🔹 Dashboard Menu Button (Top Right) */}
+      <div className="absolute top-6 bg-gray-900 p-2 right-8 z-20">
+        <Link
+          href="/dashboard"
+          className="text-sm font-semibold tracking-wide text-[#ffffff] hover:opacity-70 transition"
+        >
+          DASHBOARD
+        </Link>
+      </div>
 
       {/* Subtle Background Accent */}
       <div className="absolute -top-20 -left-32 w-[500px] h-[500px] bg-gray-200 rounded-full blur-3xl opacity-30" />
