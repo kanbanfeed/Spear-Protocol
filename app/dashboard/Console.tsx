@@ -98,18 +98,7 @@ export default function Console({
 
   return (
     <div className="space-y-12">
-
-      {/* <div>
-        <p className="text-xs tracking-[0.4em] text-gray-400 mb-3">
-          SESSION CONSOLE
-        </p>
-        <h1 className="text-3xl font-serif">
-          Initiate Daily Ritual
-        </h1>
-      </div> */}
-
       <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
-
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}

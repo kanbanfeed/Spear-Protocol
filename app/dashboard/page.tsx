@@ -8,11 +8,11 @@ export default async function Dashboard({
 }: {
   searchParams: Promise<{ session?: string }>
 }) {
-  // ✅ Unwrap searchParams properly
+  // Unwrap searchParams properly
   const params = await searchParams
   const viewingSession = params?.session
 
-  // ✅ Read cookie
+  // Read cookie
   const cookieStore = await cookies()
   const email = cookieStore.get("user_email")?.value
 
@@ -59,7 +59,7 @@ export default async function Dashboard({
   )
 }
 
-  // ✅ Fetch user + sessions
+  // Fetch user + sessions
   const user = await prisma.user.findUnique({
     where: { email },
     include: {
