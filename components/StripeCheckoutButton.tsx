@@ -26,7 +26,7 @@ export default function StripeCheckoutButton({
         bg-[#121212]
         text-white
         text-[13px]
-        tracking-[0.2em]
+        tracking-[0.1em]
         uppercase
         font-medium
         border border-[#121212]

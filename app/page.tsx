@@ -22,10 +22,10 @@ export default function Home() {
         {/* ABOVE THE FOLD */}
         {/* ===================== */}
 
-        <section className="pt-[160px] pb-[140px] text-center space-y-12">
+        <section className="py-12 text-center space-y-8">
 
           {/* Micro Label */}
-          <p className="uppercase text-xs tracking-[0.4em] text-gray-500">
+          <p className="uppercase text-xs tracking-[0.2em] text-gray-500">
             Founding Access
           </p>
 
@@ -35,19 +35,19 @@ export default function Home() {
           </h1>
 
           {/* Subline */}
-          <p className="text-[18px] text-gray-700 max-w-[720px] mx-auto leading-relaxed">
+          <p className="text-[18px] text-gray-700 max-w-[720px] mx-auto ">
             A private adversarial filter for operators making decisions that cannot be undone.
           </p>
 
           {/* Daily Entitlement Line */}
           <p className="text-[17px] text-gray-900 max-w-[760px] mx-auto">
-            Run up to three high-stakes decisions per day through a structured adversarial filter.
+            Run up to three critical decisions per day through a structured adversarial review.
           </p>
 
           {/* Anchor + Price */}
-          <div className="pt-8 space-y-3">
+          <div className="space-y-1">
             <p className="text-[16px] text-gray-600">
-              One external strategic memo typically costs $500–$5,000.
+              One external strategic memo typically costs $4,000.
             </p>
 
             <p className="text-[22px] font-medium">
@@ -56,7 +56,7 @@ export default function Home() {
           </div>
 
           {/* Seat Counter */}
-          <div className="pt-10 space-y-3">
+          <div className=" space-y-1">
             <SeatCounter />
 
             <p className="text-sm text-gray-600">
@@ -65,7 +65,7 @@ export default function Home() {
           </div>
 
           {/* CTA */}
-          <div className="pt-12">
+          <div >
             <StripeCheckoutButton label="SECURE FOUNDING ACCESS" />
           </div>
 
@@ -76,7 +76,7 @@ export default function Home() {
         {/* BELOW THE FOLD */}
         {/* ===================== */}
 
-        <section className="pb-[180px] text-center space-y-12">
+        <section className="py-14 text-center space-y-12">
 
           <h2 className="font-serif text-[42px] tracking-tight">
             What This Eliminates
