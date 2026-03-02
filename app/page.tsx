@@ -1,13 +1,37 @@
 import SeatCounter from "@/components/SeatCounter"
 import StripeCheckoutButton from "@/components/StripeCheckoutButton"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white text-[#121212]">
+    <main className="min-h-screen bg-white text-[#121212] relative">
+
+      {/* Top Left Logo */}
+      <div className="absolute top-6 left-16">
+        {/* Desktop Logo */}
+        <Image
+          src="/logo-desktop.jpeg"   // place in public folder
+          alt="SPEAR Protocol"
+          width={120}
+          height={40}
+          className="hidden md:block"
+          priority
+        />
+
+        {/* Mobile Logo */}
+        <Image
+          src="/logo-mobile.jpeg"   // place in public folder
+          alt="SPEAR Protocol"
+          width={60}
+          height={40}
+          className="block md:hidden"
+          priority
+        />
+      </div>
 
       {/* Top Right Dashboard Link */}
-      <div className="absolute top-8 right-10">
+      <div className="absolute top-10 right-8">
         <Link
           href="/dashboard"
           className="text-sm font-semibold tracking-wide hover:opacity-60 transition"
@@ -22,29 +46,24 @@ export default function Home() {
         {/* ABOVE THE FOLD */}
         {/* ===================== */}
 
-        <section className="py-12 text-center space-y-8">
+        <section className="py-24 text-center space-y-8">
 
-          {/* Micro Label */}
           <p className="uppercase text-xs tracking-[0.2em] text-gray-500">
             Founding Access
           </p>
 
-          {/* Headline */}
           <h1 className="font-serif text-[72px] md:text-[88px] leading-[1.05] tracking-tight">
             Most Strategic Errors Don’t Feel Like Errors Until It’s Too Late.
           </h1>
 
-          {/* Subline */}
           <p className="text-[18px] text-gray-700 max-w-[720px] mx-auto ">
             A private adversarial filter for operators making decisions that cannot be undone.
           </p>
 
-          {/* Daily Entitlement Line */}
           <p className="text-[17px] text-gray-900 max-w-[760px] mx-auto">
             Run up to three critical decisions per day through a structured adversarial review.
           </p>
 
-          {/* Anchor + Price */}
           <div className="space-y-1">
             <p className="text-[16px] text-gray-600">
               One external strategic memo typically costs $4,000.
@@ -55,22 +74,18 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Seat Counter */}
           <div className=" space-y-1">
             <SeatCounter />
-
             <p className="text-sm text-gray-600">
               Closes at 100. No reopening.
             </p>
           </div>
 
-          {/* CTA */}
-          <div >
+          <div>
             <StripeCheckoutButton label="SECURE FOUNDING ACCESS" />
           </div>
 
         </section>
-
 
         {/* ===================== */}
         {/* BELOW THE FOLD */}
