@@ -1,14 +1,11 @@
-import * as brevo from "@getbrevo/brevo"
+import { Brevo } from "@getbrevo/brevo"
 
-const apiInstance = new brevo.TransactionalEmailsApi()
-
-apiInstance.setApiKey(
-  brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY!
-)
+const brevo = new Brevo({
+  apiKey: process.env.BREVO_API_KEY!,
+})
 
 export async function sendWelcomeEmail(email: string) {
-  const emailData = {
+  await brevo.smtp.sendTransacEmail({
     to: [{ email }],
     sender: {
       name: "SPEAR Protocol",
@@ -43,7 +40,5 @@ export async function sendWelcomeEmail(email: string) {
         <p>SPEAR Protocol</p>
       </div>
     `,
-  }
-
-  await apiInstance.sendTransacEmail(emailData)
+  })
 }

@@ -8,7 +8,7 @@ import { sendWelcomeEmail } from "@/lib/sendWelcomeEmail" // ✅ ADDED
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
-
+export const runtime = "nodejs"
 export async function POST(req: Request) {
   const body = await req.text()
   const headerList = await headers()
