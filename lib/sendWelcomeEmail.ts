@@ -1,4 +1,4 @@
-import { Brevo } from "@getbrevo/brevo"
+import Brevo from "@getbrevo/brevo"
 
 const brevo = new Brevo({
   apiKey: process.env.BREVO_API_KEY!,
@@ -9,7 +9,7 @@ export async function sendWelcomeEmail(email: string) {
     to: [{ email }],
     sender: {
       name: "SPEAR Protocol",
-      email: "no-reply@spearprotocol.com", // must be verified in Brevo
+      email: "no-reply@spearprotocol.com",
     },
     subject: "Access Confirmed — SPEAR Protocol",
     htmlContent: `
