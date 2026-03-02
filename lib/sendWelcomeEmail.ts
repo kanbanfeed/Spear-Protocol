@@ -1,6 +1,6 @@
-import Brevo from "@getbrevo/brevo"
+import { BrevoClient } from "@getbrevo/brevo"
 
-const brevo = new Brevo({
+const brevo = new BrevoClient({
   apiKey: process.env.BREVO_API_KEY!,
 })
 
