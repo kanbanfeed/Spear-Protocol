@@ -8,7 +8,7 @@ export async function sendWelcomeEmail(email: string) {
     body: JSON.stringify({
       sender: {
         name: "SPEAR Protocol",
-        email: "no-reply@spearprotocol.com",
+        email: "support@spearprotocol.com",
       },
       to: [{ email }],
       subject: "Access Confirmed — SPEAR Protocol",

@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Console from "./Console"
 import ReferralCard from "./ReferralCard"
+import Link from "next/link"
 import DashboardLayout from "./DashboardLayout"
 
 export default async function Dashboard({
@@ -182,13 +183,21 @@ export default async function Dashboard({
             <div className="w-16 h-[2px] bg-gray-900 mt-6" />
           </div>
 
-          {/* ✅ ONLY CHANGE: passing userId */}
+          {/* ONLY CHANGE: passing userId */}
           <Console
             email={email}
             sessions={user.sessions}
             userId={user.id}
           />
-
+          <div className="text-center py-4">
+            <Link
+          href="/compliance"
+          className="text-sm text-[#000] text-center py-4 font-medium tracking-wide hover:opacity-60 transition"
+        >
+          Terms and Privacy Policy
+        </Link>
+          </div>
+        
         </div>
 
       </main>
