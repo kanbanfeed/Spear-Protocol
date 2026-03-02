@@ -3,6 +3,7 @@ import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
+import { sendWelcomeEmail } from "@/lib/sendWelcomeEmail" // ✅ ADDED
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -87,6 +88,14 @@ export async function POST(req: Request) {
       })
 
       console.log("Purchase saved:", session.id)
+
+      // ✅ SEND WELCOME EMAIL (ONLY AFTER NEW PURCHASE)
+      try {
+        await sendWelcomeEmail(email)
+        console.log("Welcome email sent:", email)
+      } catch (err) {
+        console.error("Email send failed:", err)
+      }
     }
 
     // 3️⃣ Credit referral

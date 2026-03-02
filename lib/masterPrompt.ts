@@ -71,6 +71,14 @@ Recommended if long-term control and structural strength are the priority.
   - Reduce scope
   - Remove dependency
   if structurally required.
+
+MANDATORY CONFRONTATION RULE:
+PATH A must contain one explicit sentence that begins with:
+“You are currently avoiding…”
+This sentence must name the operator’s core avoidance bias (ego, sunk cost, investor optics, power illusion, dependency, etc.).
+The sentence must be direct, unsoftened, and structurally confrontational.
+It must identify what the operator does not want to admit.
+
 - Include 2–3 decisive next steps.
 - Steps must be concrete and irreversible where appropriate.
 - This path must feel harder but stronger.
@@ -98,6 +106,7 @@ Rules:
 
 - The three paths must not feel equal.
 - PATH A must feel sharper, riskier, and more structurally correct.
+- PATH A must create mild internal discomfort.
 - If structural collapse is possible, it must be stated plainly.
 - If sunk cost bias exists, it must be named.
 - If ego preservation is visible, it must be named.

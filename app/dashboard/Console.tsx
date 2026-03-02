@@ -6,9 +6,11 @@ import { useSearchParams } from "next/navigation"
 export default function Console({
   email,
   sessions,
+  userId,
 }: {
   email: string
   sessions: any[]
+  userId: string
 }) {
   const searchParams = useSearchParams()
   const selectedId = searchParams.get("session")
@@ -49,7 +51,9 @@ export default function Console({
     }, 7000)
   }
 
-  // If viewing past session
+  /* ========================= */
+  /* PAST SESSION VIEW */
+  /* ========================= */
   if (selectedSession) {
     return (
       <div className="space-y-10">
@@ -63,26 +67,36 @@ export default function Console({
           </h1>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
+        <div className="relative bg-white border border-gray-200 rounded-2xl p-8 space-y-6 overflow-hidden">
 
-          <div>
-            <p className="text-xs tracking-[0.3em] text-gray-500 mb-2">
-              INPUT
+          {/* WATERMARK */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <p className="text-gray-900 opacity-10 text-3xl md:text-4xl font-semibold tracking-widest rotate-[-25deg] select-none text-center px-6">
+              PROPERTY OF SPEAR PROTOCOL - {userId}
             </p>
-            <div className="whitespace-pre-wrap text-gray-800">
-              {selectedSession.input}
-            </div>
           </div>
 
-          <div className="border-t pt-6">
-            <p className="text-xs tracking-[0.3em] text-gray-500 mb-2">
-              OUTPUT
-            </p>
-            <div className="whitespace-pre-wrap text-gray-800">
-              {selectedSession.output}
-            </div>
-          </div>
+          <div className="relative">
 
+            <div>
+              <p className="text-xs tracking-[0.3em] text-gray-500 mb-2">
+                INPUT
+              </p>
+              <div className="whitespace-pre-wrap text-gray-800">
+                {selectedSession.input}
+              </div>
+            </div>
+
+            <div className="border-t pt-6">
+              <p className="text-xs tracking-[0.3em] text-gray-500 mb-2">
+                OUTPUT
+              </p>
+              <div className="whitespace-pre-wrap text-gray-800">
+                {selectedSession.output}
+              </div>
+            </div>
+
+          </div>
         </div>
 
         <a
@@ -96,35 +110,53 @@ export default function Console({
     )
   }
 
+  /* ========================= */
+  /* NEW SESSION VIEW */
+  /* ========================= */
+
   return (
     <div className="space-y-12">
-      <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={isProcessing}
-          placeholder="DUMP_THE_CHAOS..."
-          className="w-full h-60 border border-gray-300 rounded-xl p-6 text-lg focus:outline-none focus:ring-1 focus:ring-gray-900"
-        />
+      <div className="relative bg-white border border-gray-200 rounded-2xl p-8 space-y-6 overflow-hidden">
 
-        <button
-          onClick={handleSubmit}
-          disabled={isProcessing}
-          className={`px-8 py-3 text-xs tracking-[0.3em] uppercase rounded-full transition-all
-            ${
-              isProcessing
-                ? "bg-gray-400 text-white"
-                : "bg-gray-900 text-white hover:opacity-90"
-            }`}
-        >
-          {isProcessing ? "Processing…" : "Initiate Session"}
-        </button>
-
+        {/* WATERMARK (only show when output exists) */}
         {stage !== "idle" && (
-          <div className="border-t pt-6 whitespace-pre-wrap text-gray-800">
-            {output}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <p className="text-gray-900 opacity-10 text-3xl md:text-4xl font-semibold tracking-widest rotate-[-25deg] select-none text-center px-6">
+              PROPERTY OF SPEAR PROTOCOL - {userId}
+            </p>
           </div>
         )}
+
+        <div className="relative">
+
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={isProcessing}
+            placeholder="DUMP_THE_CHAOS..."
+            className="w-full h-60 border border-gray-300 rounded-xl p-6 text-lg focus:outline-none focus:ring-1 focus:ring-gray-900"
+          />
+
+          <button
+            onClick={handleSubmit}
+            disabled={isProcessing}
+            className={`mt-4 px-8 py-3 text-xs tracking-[0.3em] uppercase rounded-full transition-all
+              ${
+                isProcessing
+                  ? "bg-gray-400 text-white"
+                  : "bg-gray-900 text-white hover:opacity-90"
+              }`}
+          >
+            {isProcessing ? "Processing…" : "Initiate Session"}
+          </button>
+
+          {stage !== "idle" && (
+            <div className="border-t pt-6 whitespace-pre-wrap text-gray-800">
+              {output}
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   )
