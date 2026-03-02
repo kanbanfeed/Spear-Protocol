@@ -4,11 +4,11 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
 import { sendWelcomeEmail } from "@/lib/sendWelcomeEmail" // ✅ ADDED
+export const runtime = "nodejs"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
-export const runtime = "nodejs"
 export async function POST(req: Request) {
   const body = await req.text()
   const headerList = await headers()
