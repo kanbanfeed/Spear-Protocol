@@ -51,7 +51,6 @@ export default function DashboardLayout({
       <div className="hidden md:block">
         {sidebar}
       </div>
-
       {/* MAIN */}
       <div className="flex-1 md:ml-80">
         {children}
