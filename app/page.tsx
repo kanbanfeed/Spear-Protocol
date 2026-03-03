@@ -49,7 +49,7 @@ export default function Home() {
         <section className="py-24 text-center space-y-8">
 
           <p className="uppercase text-xs tracking-[0.2em] text-gray-500">
-            Founding Access
+            PRIVATE ACCESS
           </p>
 
           <h1 className="font-serif text-[72px] md:text-[88px] leading-[1.05] tracking-tight">
@@ -70,7 +70,7 @@ export default function Home() {
             </p>
 
             <p className="text-[22px] font-medium">
-              $99 Initiation — 90 Days Access
+              $99 per month - Cancel anytime.
             </p>
           </div>
 

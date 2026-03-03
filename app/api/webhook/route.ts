@@ -3,12 +3,13 @@ import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
-import { sendWelcomeEmail } from "@/lib/sendWelcomeEmail" // ✅ ADDED
+import { sendWelcomeEmail } from "@/lib/sendWelcomeEmail"
+
 export const runtime = "nodejs"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
+
 export async function POST(req: Request) {
   const body = await req.text()
   const headerList = await headers()
@@ -27,10 +28,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
+  // ===============================
+  // CHECKOUT COMPLETED (SUBSCRIBE)
+  // ===============================
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session
 
-    // 🔥 SAFELY GET EMAIL
     let email = session.customer_email
 
     if (!email && session.customer) {
@@ -48,11 +51,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ received: true })
     }
 
-    console.log("Webhook email:", email)
-
     const referralUsed = session.metadata?.ref || null
 
-    // 1️⃣ Find or create user
+    // Find or create user
     let user = await prisma.user.findUnique({
       where: { email },
     })
@@ -69,11 +70,21 @@ export async function POST(req: Request) {
           referralCode,
         },
       })
-
-      console.log("User created:", email)
     }
 
-    // 2️⃣ Prevent duplicate purchase
+    // SAVE SUBSCRIPTION INFO (NEW)
+    if (session.subscription) {
+      await prisma.user.update({
+        where: { email },
+        data: {
+          stripeCustomerId: session.customer as string,
+          stripeSubscriptionId: session.subscription as string,
+          subscriptionStatus: "active",
+        },
+      })
+    }
+
+    // Prevent duplicate purchase
     const existingPurchase = await prisma.purchase.findUnique({
       where: { stripeSessionId: session.id },
     })
@@ -87,18 +98,14 @@ export async function POST(req: Request) {
         },
       })
 
-      console.log("Purchase saved:", session.id)
-
-      // ✅ SEND WELCOME EMAIL (ONLY AFTER NEW PURCHASE)
       try {
         await sendWelcomeEmail(email)
-        console.log("Welcome email sent:", email)
       } catch (err) {
         console.error("Email send failed:", err)
       }
     }
 
-    // 3️⃣ Credit referral
+    // Referral credit (UNCHANGED)
     if (referralUsed) {
       const referrer = await prisma.user.findUnique({
         where: { referralCode: referralUsed },
@@ -113,9 +120,54 @@ export async function POST(req: Request) {
             },
           },
         })
-
-        console.log("Referral credited:", referralUsed)
       }
+    }
+  }
+
+  // ==================================
+  // SUBSCRIPTION UPDATED / CANCELLED
+  // ==================================
+  if (
+    event.type === "customer.subscription.updated" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    const subscription = event.data.object as Stripe.Subscription
+
+    const customerId = subscription.customer as string
+
+    const user = await prisma.user.findFirst({
+      where: { stripeCustomerId: customerId },
+    })
+
+    if (user) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          subscriptionStatus: subscription.status,
+        },
+      })
+    }
+  }
+
+  // ==================================
+  // PAYMENT FAILED
+  // ==================================
+  if (event.type === "invoice.payment_failed") {
+    const invoice = event.data.object as Stripe.Invoice
+
+    const customerId = invoice.customer as string
+
+    const user = await prisma.user.findFirst({
+      where: { stripeCustomerId: customerId },
+    })
+
+    if (user) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          subscriptionStatus: "past_due",
+        },
+      })
     }
   }
 
