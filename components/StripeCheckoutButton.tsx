@@ -1,7 +1,7 @@
 "use client"
 
 export default function StripeCheckoutButton({
-  label = "SECURE FOUNDING ACCESS",
+  label = "SECURE PRIVATE ACCESS",
 }: {
   label?: string
 }) {
