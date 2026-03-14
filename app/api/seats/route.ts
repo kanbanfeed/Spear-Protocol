@@ -5,13 +5,30 @@ const MAX_SEATS = 100
 
 export async function GET() {
   try {
+
+    // Count total successful purchases
     const purchaseCount = await prisma.purchase.count()
 
-    const remaining = Math.max(MAX_SEATS - purchaseCount, 0)
+    // Calculate remaining seats
+    const remainingSeats = Math.max(MAX_SEATS - purchaseCount, 0)
 
-    return NextResponse.json({ remaining })
+    console.log("Seats remaining:", remainingSeats)
+
+    return NextResponse.json({
+      remaining: remainingSeats,
+      maxSeats: MAX_SEATS,
+    })
+
   } catch (error) {
     console.error("Seat counter error:", error)
-    return NextResponse.json({ remaining: MAX_SEATS })
+
+    return NextResponse.json(
+      {
+        remaining: MAX_SEATS,
+        maxSeats: MAX_SEATS,
+        error: "Seat calculation failed",
+      },
+      { status: 500 }
+    )
   }
 }

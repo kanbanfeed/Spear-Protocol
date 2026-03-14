@@ -1,33 +1,41 @@
+"use client"
+
+import { useState } from "react"
 import SeatCounter from "@/components/SeatCounter"
 import StripeCheckoutButton from "@/components/StripeCheckoutButton"
 import Link from "next/link"
 import Image from "next/image"
 
 export default function Home() {
+
+  const [email, setEmail] = useState("")
+
   return (
     <main className="min-h-screen bg-white text-[#121212] relative">
 
       {/* Top Left Logo */}
       <div className="absolute top-6 left-16">
-        {/* Desktop Logo */}
+
         <Image
-          src="/logo-desktop.jpeg"   // place in public folder
+          src="/logo-desktop.jpeg"
           alt="SPEAR Protocol"
           width={120}
           height={40}
           className="hidden md:block"
+          style={{ height: "auto" }}
           priority
         />
 
-        {/* Mobile Logo */}
         <Image
-          src="/logo-mobile.jpeg"   // place in public folder
+          src="/logo-mobile.jpeg"
           alt="SPEAR Protocol"
           width={60}
           height={40}
           className="block md:hidden"
+          style={{ height: "auto" }}
           priority
         />
+
       </div>
 
       {/* Top Right Dashboard Link */}
@@ -41,10 +49,6 @@ export default function Home() {
       </div>
 
       <div className="max-w-[900px] mx-auto px-6">
-
-        {/* ===================== */}
-        {/* ABOVE THE FOLD */}
-        {/* ===================== */}
 
         <section className="py-24 text-center space-y-8">
 
@@ -81,15 +85,24 @@ export default function Home() {
             </p>
           </div>
 
-          <div>
-            <StripeCheckoutButton label="SECURE FOUNDING ACCESS" />
+          {/* EMAIL INPUT */}
+          <div className="max-w-[380px] mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-1 focus:ring-black"
+            />
           </div>
 
-        </section>
+          {/* CHECKOUT BUTTON */}
+          <StripeCheckoutButton
+            label="SECURE FOUNDING ACCESS"
+            email={email}
+          />
 
-        {/* ===================== */}
-        {/* BELOW THE FOLD */}
-        {/* ===================== */}
+        </section>
 
         <section className="py-14 text-center space-y-12">
 

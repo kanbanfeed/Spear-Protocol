@@ -4,17 +4,16 @@ import Console from "./Console"
 import ReferralCard from "./ReferralCard"
 import Link from "next/link"
 import DashboardLayout from "./DashboardLayout"
+import { redirect } from "next/navigation"
 
 export default async function Dashboard({
   searchParams,
 }: {
   searchParams: Promise<{ session?: string }>
 }) {
-  // Unwrap searchParams properly
   const params = await searchParams
   const viewingSession = params?.session
 
-  // Read cookie
   const cookieStore = await cookies()
   const email = cookieStore.get("user_email")?.value
 
@@ -61,7 +60,6 @@ export default async function Dashboard({
     )
   }
 
-  // Fetch user + sessions
   const user = await prisma.user.findUnique({
     where: { email },
     include: {
@@ -77,6 +75,14 @@ export default async function Dashboard({
         <p className="text-gray-500">User not found.</p>
       </div>
     )
+  }
+
+  /* ========================= */
+  /* ADDED: SUBSCRIPTION CHECK */
+  /* ========================= */
+
+  if (user.subscriptionStatus !== "active") {
+    redirect("/")
   }
 
   return (
@@ -183,21 +189,21 @@ export default async function Dashboard({
             <div className="w-16 h-[2px] bg-gray-900 mt-6" />
           </div>
 
-          {/* ONLY CHANGE: passing userId */}
           <Console
             email={email}
             sessions={user.sessions}
             userId={user.id}
           />
+
           <div className="text-center py-4">
             <Link
-          href="/compliance"
-          className="text-sm text-[#000] text-center py-4 font-medium tracking-wide hover:opacity-60 transition"
-        >
-          Terms and Privacy Policy
-        </Link>
+              href="/compliance"
+              className="text-sm text-[#000] text-center py-4 font-medium tracking-wide hover:opacity-60 transition"
+            >
+              Terms and Privacy Policy
+            </Link>
           </div>
-        
+
         </div>
 
       </main>

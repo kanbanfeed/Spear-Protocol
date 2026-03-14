@@ -33,27 +33,56 @@ export default function Console({
 
     setStage("analyzing")
 
-    const res = await fetch("/api/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input, email }),
-    })
+    try {
+      const res = await fetch("/api/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ input, email }),
+      })
 
-    const data = await res.json()
-    setOutput(data.output)
+      // RATE LIMIT HANDLING
+      if (res.status === 429) {
+        alert("You have reached the hourly session limit. Please try again later.")
+        setStage("idle")
+        return
+      }
 
-    setTimeout(() => {
-      setStage("rearchitecting")
-    }, 3000)
+      // SUBSCRIPTION REQUIRED
+      if (res.status === 403) {
+        alert("Active subscription required.")
+        window.location.href = "/"
+        return
+      }
 
-    setTimeout(() => {
-      setStage("done")
-    }, 7000)
+      if (!res.ok) {
+        alert("Session failed. Please try again.")
+        setStage("idle")
+        return
+      }
+
+      const data = await res.json()
+
+      setOutput(data.output)
+
+      setTimeout(() => {
+        setStage("rearchitecting")
+      }, 3000)
+
+      setTimeout(() => {
+        setStage("done")
+      }, 7000)
+
+    } catch (error) {
+      console.error("Session request failed:", error)
+      alert("Something went wrong. Please try again.")
+      setStage("idle")
+    }
   }
 
   /* ========================= */
   /* PAST SESSION VIEW */
   /* ========================= */
+
   if (selectedSession) {
     return (
       <div className="space-y-10">
