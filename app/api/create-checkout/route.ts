@@ -33,7 +33,7 @@ export async function POST(req: Request) {
             product_data: {
               name: "SPEAR Protocol - Monthly Access",
             },
-            unit_amount: 9900,
+            unit_amount: 49900,
             recurring: {
               interval: "month",
             },

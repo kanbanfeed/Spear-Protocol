@@ -24,15 +24,18 @@ export default function Console({
 
   const [input, setInput] = useState("")
   const [output, setOutput] = useState("")
+  const [speechInstance, setSpeechInstance] = useState<SpeechSynthesisUtterance | null>(null)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isLoadingAudio, setIsLoadingAudio] = useState(false)
+  const [audioInstance, setAudioInstance] = useState<HTMLAudioElement | null>(null)
+  const [isPaused, setIsPaused] = useState(false)
   const [stage, setStage] = useState<
     "idle" | "analyzing" | "rearchitecting" | "done"
   >("idle")
 
-  // ✅ NEW: voice state
+  //  NEW: voice state
   const [isListening, setIsListening] = useState(false)
 
   const isProcessing =
@@ -68,7 +71,7 @@ const handleVoiceInput = () => {
       transcript += event.results[i][0].transcript
     }
 
-    // ✅ Always update latest full sentence (not append)
+    //  Always update latest full sentence (not append)
     setInput(transcript)
     finalText = transcript
   }
@@ -81,7 +84,7 @@ const handleVoiceInput = () => {
   recognition.onend = () => {
     setIsListening(false)
 
-    // ✅ Ensure last captured text stays
+    //  Ensure last captured text stays
     if (finalText) {
       setInput(finalText)
     }
@@ -147,8 +150,14 @@ const handleVoiceInput = () => {
     }
   }
 
-const handleListen = async () => {
-  if (!output || isPlaying || isLoadingAudio) return
+const handleListen = async (textToRead?: string) => {
+  window.speechSynthesis.cancel()
+setAudioInstance(null)
+setSpeechInstance(null)
+setIsPaused(false)
+  const text = textToRead || output
+
+  if (!text || isPlaying || isLoadingAudio) return
 
   setIsLoadingAudio(true)
 
@@ -158,38 +167,36 @@ const handleListen = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text: output }),
+      body: JSON.stringify({ text }),
     })
 
-    // ✅ If ElevenLabs fails → fallback
     if (!res.ok) {
-      console.warn("ElevenLabs failed → using browser voice")
+      const speech = new SpeechSynthesisUtterance(text.slice(0, 6000))
 
-      const speech = new SpeechSynthesisUtterance(output.slice(0, 60000))
-      speech.rate = 0.95
-      speech.pitch = 1
+setSpeechInstance(speech)
 
-      speech.onstart = () => {
-        setIsPlaying(true)
-        setIsLoadingAudio(false)
-      }
+speech.rate = 0.95
 
-      speech.onend = () => {
-        setIsPlaying(false)
-      }
+speech.onstart = () => {
+  setIsPlaying(true)
+  setIsLoadingAudio(false)
+}
 
-      window.speechSynthesis.speak(speech)
-      return
+speech.onend = () => {
+  setIsPlaying(false)
+  setIsPaused(false)
+}
+
+window.speechSynthesis.cancel() // important
+window.speechSynthesis.speak(speech)
+return
     }
 
     const blob = await res.blob()
-
-    if (!blob || blob.size === 0) {
-      throw new Error("Empty audio")
-    }
-
     const url = URL.createObjectURL(blob)
     const audio = new Audio(url)
+    setAudioInstance(audio)
+    setIsPaused(false)
 
     audio.onplay = () => {
       setIsPlaying(true)
@@ -210,10 +217,7 @@ const handleListen = async () => {
     await audio.play()
 
   } catch (err) {
-    console.warn("Fallback to browser TTS")
-
-    // ✅ FINAL FALLBACK (always works)
-    const speech = new SpeechSynthesisUtterance(output.slice(0, 600))
+    const speech = new SpeechSynthesisUtterance(text.slice(0, 6000))
     speech.rate = 0.95
 
     speech.onstart = () => {
@@ -229,42 +233,72 @@ const handleListen = async () => {
   }
 }
 
+const handlePause = () => {
+  if (audioInstance && isPlaying) {
+    audioInstance.pause()
+  } else {
+    if (speechInstance) {
+      window.speechSynthesis.pause()
+    }
+  }
 
-const handleDownload = (text = output) => {
+  setIsPaused(true)
+  setIsPlaying(false)
+}
+
+const handleResume = () => {
+  if (audioInstance && isPaused) {
+    audioInstance.play()
+  } else if (speechInstance) {
+    window.speechSynthesis.resume()
+  }
+
+  setIsPaused(false)
+  setIsPlaying(true)
+}
+const handleDownload = (text = output, createdAt?: string) => {
   if (!text) return
 
   const doc = new jsPDF()
 
-  const now = new Date()
-  const formattedDate = now.toISOString().split("T")[0] // YYYY-MM-DD
-  const displayDate = now.toLocaleString()
+  const dateObj = createdAt ? new Date(createdAt) : new Date()
+  const formattedDate = dateObj.toISOString().split("T")[0]
+  const displayDate = dateObj.toLocaleString()
 
-  // Title
-  doc.setFontSize(16)
-  doc.text("SPEAR Protocol", 20, 20)
+  const img = new Image()
+  img.src = "/logo-desktop.jpeg"
 
-  // Date
-  doc.setFontSize(10)
-  doc.text(displayDate, 20, 28)
+  img.onload = () => {
+    //  LOGO
+    doc.addImage(img, "JPEG", 20, 10, 40, 15)
 
-  // Line
-  doc.line(20, 32, 190, 32)
+    // Title
+    doc.setFontSize(16)
+    doc.text("SPEAR Protocol", 20, 30)
 
-  // Content
-  doc.setFontSize(11)
-  const lines = doc.splitTextToSize(text, 170)
-  doc.text(lines, 20, 40)
+    // Date
+    doc.setFontSize(10)
+    doc.text(displayDate, 20, 38)
 
-  // Footer
-  doc.setFontSize(9)
-  doc.text(
-    "Private and Confidential — SPEAR Protocol — spearprotocol.com",
-    20,
-    285
-  )
+    // Line
+    doc.line(20, 42, 190, 42)
 
-  // Filename
-  doc.save(`SPEAR-Brief-${formattedDate}.pdf`)
+    // Content
+    doc.setFontSize(11)
+    const lines = doc.splitTextToSize(text, 170)
+    doc.text(lines, 20, 50)
+
+    // Footer
+    doc.setFontSize(9)
+    doc.text(
+      "Private and Confidential — SPEAR Protocol — spearprotocol.com",
+      20,
+      285
+    )
+
+    // Save
+    doc.save(`SPEAR-Brief-${formattedDate}.pdf`)
+  }
 }
   /* ========================= */
   /* PAST SESSION VIEW */
@@ -300,39 +334,46 @@ const handleDownload = (text = output) => {
             </div>
 
             <div className="border-t pt-6">
-              <button
-                onClick={handleListen}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
-              >
-                {/* Speaker Icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11.25 5.25L6 9H3.75a.75.75 0 00-.75.75v4.5c0 .414.336.75.75.75H6l5.25 3.75V5.25zM15.75 9.75a3 3 0 010 4.5m1.5-6a6 6 0 010 9"
-                  />
-                </svg>
+              <div className="flex justify-center items-center gap-12">
+              <div className="flex items-center gap-4">
+  <button
+    onClick={() => handleListen(selectedSession?.output || output)}
+    className="text-sm text-gray-600 hover:text-black"
+  >
+    🔊 Listen
+  </button>
 
-                Listen
-              </button>
+  {isPlaying && (
+    <button
+      onClick={handlePause}
+      className="text-sm text-gray-600 hover:text-black"
+    >
+      ⏸ Pause
+    </button>
+  )}
+
+  {isPaused && (
+    <button
+      onClick={handleResume}
+      className="text-sm text-gray-600 hover:text-black"
+    >
+      ▶ Resume
+    </button>
+  )}
+</div>
               <button
-                onClick={() => {
-                  const doc = new jsPDF()
-                  doc.text(selectedSession.output, 20, 20)
-                  doc.save(`SPEAR-Brief-${Date.now()}.pdf`)
-                }}
-                className="mt-4 text-sm text-gray-600 hover:text-black"
+                onClick={() =>
+                  handleDownload(
+                    selectedSession.output,
+                    selectedSession.createdAt
+                  )
+                }
+                className=" text-sm text-gray-600 hover:text-black"
               >
                 📄 Download Brief
               </button>
-              <p className="text-xs tracking-[0.3em] text-gray-500 mb-2">
+              </div>
+              <p className="text-xs mt-8 tracking-[0.3em] text-gray-500 mb-2">
                 OUTPUT
               </p>
               <div className="whitespace-pre-wrap text-gray-800">
@@ -370,7 +411,7 @@ const handleDownload = (text = output) => {
 
         <div className="relative">
 
-          {/* ✅ TEXTAREA + MIC */}
+          {/*  TEXTAREA + MIC */}
           <div className="relative">
             <textarea
               value={input}
@@ -380,7 +421,7 @@ const handleDownload = (text = output) => {
               className="w-full h-60 border border-gray-300 rounded-xl p-6 pr-16 text-lg focus:outline-none focus:ring-1 focus:ring-gray-900"
             />
 
-            {/* ✅ MIC BUTTON */}
+            {/*  MIC BUTTON */}
             <button
               type="button"
               onClick={handleVoiceInput}
@@ -436,35 +477,41 @@ const handleDownload = (text = output) => {
 
               {stage === "done" && (
   <div className="w-full space-y-6 animate-fadeOut">
-    {/* 🔊 LISTEN BUTTON */}
-    <button
-      onClick={handleListen}
-      className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
-    >
-      {/* Speaker Icon */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-5 h-5"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M11.25 5.25L6 9H3.75a.75.75 0 00-.75.75v4.5c0 .414.336.75.75.75H6l5.25 3.75V5.25zM15.75 9.75a3 3 0 010 4.5m1.5-6a6 6 0 010 9"
-        />
-      </svg>
+    <div className="flex justify-center items-center gap-12">
+     <div className="flex items-center gap-4">
+  <button
+    onClick={() => handleListen(selectedSession?.output || output)}
+    className="text-sm text-gray-600 hover:text-black"
+  >
+    🔊 Listen
+  </button>
 
-      Listen
+  {isPlaying && (
+    <button
+      onClick={handlePause}
+      className="text-sm text-gray-600 hover:text-black"
+    >
+      ⏸ Pause
     </button>
+  )}
+
+  {isPaused && (
+    <button
+      onClick={handleResume}
+      className="text-sm text-gray-600 hover:text-black"
+    >
+      ▶ Resume
+    </button>
+  )}
+</div>
     <button
       onClick={() => handleDownload(output)}     
-      className="mt-4 text-sm text-gray-600 hover:text-black"
+      className="text-sm text-gray-600 hover:text-black"
     >
       📄 Download Brief
     </button>
+    </div>
+    
 
     {/* 📊 PROGRESS BAR */}
     {isPlaying && (

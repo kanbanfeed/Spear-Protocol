@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const formattedDate = now.toISOString().split("T")[0]
     const displayDate = now.toLocaleString()
 
-    // ✅ Create PDF
+    //  Create PDF
     const doc = new jsPDF()
 
     doc.setFontSize(16)
@@ -33,10 +33,10 @@ export async function POST(req: NextRequest) {
 
     const pdfBuffer = doc.output("arraybuffer")
 
-    // ✅ Convert to base64
+    //  Convert to base64
     const pdfBase64 = Buffer.from(pdfBuffer).toString("base64")
 
-    // ✅ Send via Brevo
+    //  Send via Brevo
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {

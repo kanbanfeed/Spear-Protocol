@@ -31,4 +31,6 @@ PATH B — DEFENSIVE STABILIZATION: Preserves capital and stability.
 PATH C — POLITICAL CONTAINMENT: Manages optics and stakeholders.
 
 Each path gets exactly three concrete steps. Every step must be specific enough that the operator knows exactly what to do tomorrow morning. Total output must not exceed 1200 words.
+
+Do not use bold, markdown, symbols, or any formatting. Output must be plain text only.
 `

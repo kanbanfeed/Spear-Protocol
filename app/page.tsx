@@ -74,14 +74,14 @@ export default function Home() {
             </p>
 
             <p className="text-[22px] font-medium">
-              $99 per month - Cancel anytime.
+              $499 per month - Cancel anytime.
             </p>
           </div>
 
           <div className=" space-y-1">
             <SeatCounter />
             <p className="text-sm text-gray-600">
-              Closes at 100. No reopening.
+              Closes at 50. No reopening.
             </p>
           </div>
 

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-const MAX_SEATS = 100
+const MAX_SEATS = 50
 
 export async function GET() {
   try {

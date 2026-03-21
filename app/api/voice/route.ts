@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 
-// ✅ Extract only required sections
+//  Extract only required sections
 function extractRelevantText(text: string) {
   const phase1Match = text.match(/PHASE I[\s\S]*?(?=PHASE II)/)
   const phase2Match = text.match(/PHASE II[\s\S]*?(?=PHASE III)/)
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       return new Response("No text provided", { status: 400 })
     }
 
-    // ✅ STRICT TRIM (free plan safe)
+    //  STRICT TRIM (free plan safe)
     const trimmedText = extractRelevantText(text).slice(0, 1200)
 
     const response = await fetch(
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           text: trimmedText,
-          model_id: "eleven_multilingual_v2", // ✅ free-tier supported
+          model_id: "eleven_multilingual_v2", //  free-tier supported
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
@@ -46,10 +46,10 @@ export async function POST(req: NextRequest) {
       }
     )
 
-    // ❗ Handle API errors
+    //  Handle API errors
     if (!response.ok) {
       const errorText = await response.text()
-      console.error("❌ ElevenLabs API Error:", errorText)
+      console.error(" ElevenLabs API Error:", errorText)
       return new Response("Failed to generate audio", { status: 500 })
     }
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     if (!contentType || !contentType.includes("audio")) {
       const errorText = await response.text()
-      console.error("❌ Invalid audio response:", errorText)
+      console.error(" Invalid audio response:", errorText)
       return new Response("Invalid audio response", { status: 500 })
     }
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       },
     })
   } catch (error) {
-    console.error("❌ Voice API error:", error)
+    console.error(" Voice API error:", error)
     return new Response("Error generating audio", { status: 500 })
   }
 }
