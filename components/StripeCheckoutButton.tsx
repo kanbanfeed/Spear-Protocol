@@ -35,7 +35,7 @@ export default function StripeCheckoutButton({
       className="
         group relative w-full overflow-hidden 
         bg-gradient-to-r from-amber-500 to-amber-600 
-        text-black font-bold py-4 px-8 rounded-xl text-lg 
+        text-black font-bold py-3 px-8 rounded-xl text-lg 
         transition-all duration-300 hover:scale-[1.02] 
         hover:shadow-2xl hover:shadow-amber-500/30 
         active:scale-[0.98]

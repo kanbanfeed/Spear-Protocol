@@ -34,7 +34,7 @@ export default function Home() {
 
       {/* NAVIGATION BAR - Premium */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-amber-500/20">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-3 flex justify-between items-center">
           {/* Logo with Image */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-16 h-16">
@@ -69,40 +69,40 @@ export default function Home() {
       </nav>
 
       {/* SECTION 1 — ABOVE THE FOLD - Premium Hero */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 mt-30">
+      <section className="relative min-h-screen flex items-center justify-center px-6 mt-24">
         <div className="max-w-6xl mx-auto text-center relative z-10">
           {/* Animated Badge */}
-          <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
               <span className="text-xs tracking-[0.2em] text-amber-400 uppercase font-medium">
-                PRIVATE ACCESS — FOUNDING SEATS
+                PRIVATE ACCESS — 50 FOUNDING SEATS REMAINING
               </span>
             </div>
           </div>
 
           {/* Main Headline with Gradient */}
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] tracking-tight max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-4xl lg:text-5xl leading-[1] tracking-tight max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
             Most strategic errors don't feel like errors
             <span className="block bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">until it's too late.</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="mt-6 text-white/70 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+          <p className="mt-4 text-white/70 text-lg md:text-xl  mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             A private decision instrument for operators making decisions that cannot be undone.
           </p>
 
           {/* Divider with Glow */}
-          <div className="relative w-20 h-px mx-auto my-10">
+          <div className="relative w-20 h-px mx-auto mt-2">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent blur-sm"></div>
           </div>
 
           {/* Three Lines */}
-          <div className="space-y-3 text-white/90 text-base md:text-lg max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          <div className="space-y-1 text-white/90 text-base md:text-lg max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
             <p className="hover:text-amber-400 transition-colors flex items-center justify-center gap-2">
               <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -124,7 +124,7 @@ export default function Home() {
           </div>
 
           {/* Divider */}
-          <div className="relative w-20 h-px mx-auto my-10">
+          <div className="relative w-20 h-px mx-auto my-2">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
           </div>
 
@@ -143,11 +143,21 @@ export default function Home() {
           </div>
 
           {/* DYNAMIC SEAT COUNTER */}
-          <div className="mt-10 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+          <div className="mt-2 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
             <SeatCounter isPulsing={isPulsing} />
           </div>
 
           {/* Email Input with Premium Design */}
+          
+
+          {/* CTA Button - Using StripeCheckoutButton Component */}
+          <div className="mt-6 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
+            <StripeCheckoutButton 
+              label="SECURE YOUR ACCESS"
+              email={email}
+            />
+          </div>
+
           <div className="mt-10 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-600">
             <div className="relative group">
               <input
@@ -159,14 +169,6 @@ export default function Home() {
               />
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-500/0 via-amber-500/0 to-amber-500/0 group-focus-within:from-amber-500/10 group-focus-within:via-amber-500/5 group-focus-within:to-transparent pointer-events-none transition-all duration-500"></div>
             </div>
-          </div>
-
-          {/* CTA Button - Using StripeCheckoutButton Component */}
-          <div className="mt-6 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
-            <StripeCheckoutButton 
-              label="SECURE YOUR ACCESS"
-              email={email}
-            />
           </div>
 
           {/* Small Muted Text */}
