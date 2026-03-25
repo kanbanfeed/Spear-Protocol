@@ -8,27 +8,21 @@ interface SeatCounterProps {
 
 export default function SeatCounter({ isPulsing = false }: SeatCounterProps) {
   const [remaining, setRemaining] = useState<number | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetchSeats() {
       try {
-        setIsLoading(true)
         const res = await fetch("/api/seats")
         const data = await res.json()
         setRemaining(data.remaining)
       } catch (error) {
         console.error("Failed to fetch seats")
-      } finally {
-        setIsLoading(false)
       }
     }
 
     fetchSeats()
     
-    // Optional: Refresh seat count every 30 seconds
     const interval = setInterval(fetchSeats, 30000)
-    
     return () => clearInterval(interval)
   }, [])
 
@@ -46,9 +40,7 @@ export default function SeatCounter({ isPulsing = false }: SeatCounterProps) {
         </span>
         
         {/* Content */}
-        {isLoading ? (
-          <span className="tracking-wide">Loading seats...</span>
-        ) : (
+        {remaining !== null && (
           <>
             <span className="tracking-wide font-bold">
               {remaining} founding {remaining === 1 ? 'seat' : 'seats'} remaining

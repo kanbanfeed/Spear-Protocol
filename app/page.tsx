@@ -24,7 +24,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#020617] text-white relative overflow-x-hidden">
       {/* Premium Background Effects */}
       <div className="fixed inset-0 bg-gradient-to-br from-[#020617] via-[#0A0F2A] to-[#020617] opacity-100"></div>
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08),transparent_50%)]"></div>
+
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(0,0,0,0.5),transparent_70%)]"></div>
       
       {/* Animated Grid Pattern */}
