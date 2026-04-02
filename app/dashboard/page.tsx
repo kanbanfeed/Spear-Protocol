@@ -210,10 +210,11 @@
 //     </DashboardLayout>
 //   )
 // }
-
+export const dynamic = "force-dynamic"
 import Console from "./Console"
 import Image from "next/image"
 import Link from "next/link"
+
 
 export default function Dashboard() {
   return (
