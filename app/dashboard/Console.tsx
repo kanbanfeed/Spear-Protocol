@@ -3,9 +3,6 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import jsPDF from "jspdf"
-
-
-
 export default function Console({
   email,
   sessions,
@@ -100,7 +97,7 @@ const handleVoiceInput = () => {
       const res = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input, email }),
+        body: JSON.stringify({ input }),
       })
 
       if (res.status === 429) {
@@ -109,11 +106,11 @@ const handleVoiceInput = () => {
         return
       }
 
-      if (res.status === 403) {
-        alert("Active subscription required.")
-        window.location.href = "/"
-        return
-      }
+      // if (res.status === 403) {
+      //   alert("Active subscription required.")
+      //   window.location.href = "/"
+      //   return
+      // }
 
       if (!res.ok) {
         alert("Session failed. Please try again.")
@@ -124,16 +121,16 @@ const handleVoiceInput = () => {
       const data = await res.json()
       setOutput(data.output)
 
-      await fetch("/api/send-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        output: data.output,
-      }),
-    })
+    //   await fetch("/api/send-email", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     email,
+    //     output: data.output,
+    //   }),
+    // })
 
       setTimeout(() => {
         setStage("rearchitecting")
@@ -417,7 +414,7 @@ const handleDownload = (text = output, createdAt?: string) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isProcessing}
-              placeholder="DUMP_THE_CHAOS..."
+              placeholder="Describe your situation."
               className="w-full h-60 border border-gray-300 rounded-xl p-6 pr-16 text-lg focus:outline-none focus:ring-1 focus:ring-gray-900"
             />
 
@@ -462,6 +459,9 @@ const handleDownload = (text = output, createdAt?: string) => {
           >
             {isProcessing ? "Processing…" : "Initiate Session"}
           </button>
+          <p className="text-s text-gray-400 mt-2 text-center">
+            No card. No login. Just clarity.
+          </p>
 
           {stage !== "idle" && (
             <div className="border-t pt-6 min-h-[200px] flex flex-col items-center justify-center">
