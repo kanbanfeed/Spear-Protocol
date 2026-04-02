@@ -220,6 +220,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center px-6">
       <div className="w-full max-w-4xl">
 
+
         <Link href="/" className="flex items-center mb-4 gap-3 group">
             <div className="relative w-20 h-20">
               <Image
