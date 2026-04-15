@@ -5,16 +5,29 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: Request) {
   try {
-    const { email, referralCode } = await req.json()
+    const prices: any = {
+      standard: 2000,   // $20
+      operator: 20000,  // $200
+      verified: 75000,  // $750
+    }
 
+    const { email, plan, userId, referralCode } = await req.json()
+
+    //  Validation
     if (!email) {
       return NextResponse.json(
-        { error: "Email required" },
+        { error: "Email is required" },
         { status: 400 }
       )
     }
 
-    // Create checkout session
+    if (!plan || !prices[plan]) {
+      return NextResponse.json(
+        { error: "Invalid plan selected" },
+        { status: 400 }
+      )
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
 
@@ -22,7 +35,10 @@ export async function POST(req: Request) {
 
       customer_email: email,
 
+      //  IMPORTANT (used in webhook)
       metadata: {
+        userId: userId || "guest",
+        plan,
         ref: referralCode || "",
       },
 
@@ -31,9 +47,9 @@ export async function POST(req: Request) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: "SPEAR Protocol - Monthly Access",
+              name: `SPEAR Protocol - ${plan}`,
             },
-            unit_amount: 49900,
+            unit_amount: prices[plan],
             recurring: {
               interval: "month",
             },
@@ -42,16 +58,14 @@ export async function POST(req: Request) {
         },
       ],
 
-      success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}/`,
+      success_url: `${process.env.NEXT_PUBLIC_URL}/dashboard?payment=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}/dashboard?payment=cancel`,
     })
-
-    console.log("Stripe checkout created:", session.id)
 
     return NextResponse.json({ url: session.url })
 
   } catch (error) {
-    console.error("Checkout session creation failed:", error)
+    console.error("Stripe checkout error:", error)
 
     return NextResponse.json(
       { error: "Checkout creation failed" },

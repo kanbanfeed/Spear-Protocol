@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server"
 import jsPDF from "jspdf"
+import fs from "fs"
+import path from "path"
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,21 +11,45 @@ export async function POST(req: NextRequest) {
     const formattedDate = now.toISOString().split("T")[0]
     const displayDate = now.toLocaleString()
 
-    //  Create PDF
+    // ===============================
+    //  LOAD LOGO (SERVER SAFE)
+    // ===============================
+    const logoPath = path.join(process.cwd(), "public/logo-desktop.jpeg")
+    const logoBuffer = fs.readFileSync(logoPath)
+    const logoBase64 = logoBuffer.toString("base64")
+
+    // ===============================
+    //  CREATE PDF
+    // ===============================
     const doc = new jsPDF()
 
+    //  ADD LOGO
+    doc.addImage(
+      `data:image/jpeg;base64,${logoBase64}`,
+      "JPEG",
+      20,
+      10,
+      40,
+      15
+    )
+
+    // Title
     doc.setFontSize(16)
-    doc.text("SPEAR Protocol", 20, 20)
+    doc.text("SPEAR Protocol", 20, 35)
 
+    // Date
     doc.setFontSize(10)
-    doc.text(displayDate, 20, 28)
+    doc.text(displayDate, 20, 42)
 
-    doc.line(20, 32, 190, 32)
+    // Line
+    doc.line(20, 46, 190, 46)
 
+    // Content
     doc.setFontSize(11)
     const lines = doc.splitTextToSize(output, 170)
-    doc.text(lines, 20, 40)
+    doc.text(lines, 20, 55)
 
+    // Footer
     doc.setFontSize(9)
     doc.text(
       "Private and Confidential — SPEAR Protocol — spearprotocol.com",
@@ -32,11 +58,11 @@ export async function POST(req: NextRequest) {
     )
 
     const pdfBuffer = doc.output("arraybuffer")
-
-    //  Convert to base64
     const pdfBase64 = Buffer.from(pdfBuffer).toString("base64")
 
-    //  Send via Brevo
+    // ===============================
+    //  SEND EMAIL
+    // ===============================
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
@@ -53,17 +79,19 @@ export async function POST(req: NextRequest) {
         htmlContent: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #111;">
             
-            <h2 style="margin-bottom: 10px;">SPEAR Protocol</h2>
-            
-            <p style="font-size: 14px; color: #555;">
-            Your decision brief has been generated successfully.
-            </p>
+            <h2>SPEAR Protocol</h2>
 
-            <p style="font-size: 14px; color: #555;">
-            You can download your brief using the button below.
-            </p>
+            <p>Your decision brief is ready.</p>
 
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;" />
+            <pre style="white-space: pre-wrap; font-size: 13px; line-height: 1.5;">
+${output}
+            </pre>
+
+            <hr />
+
+            <p style="font-size: 13px;">
+            Run your next decision free — share your experience at spearprotocol.com
+            </p>
 
             <p style="font-size: 12px; color: #888;">
             Private and Confidential — SPEAR Protocol — spearprotocol.com
@@ -72,12 +100,11 @@ export async function POST(req: NextRequest) {
         </div>
         `,
         attachment: [
-            {
+          {
             content: pdfBase64,
             name: `SPEAR-Brief-${formattedDate}.pdf`,
-            },
+          },
         ],
-        
       }),
     })
 

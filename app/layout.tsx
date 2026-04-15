@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist } from "next/font/google"
 import { Playfair_Display } from "next/font/google"
 import "./globals.css"
+import Providers from "./providers"
 
 const geist = Geist({
   subsets: ["latin"],
@@ -31,7 +32,9 @@ export default function RootLayout({
       <body
         className={`${geist.variable} ${playfair.variable} bg-[#F9F9F9] text-[#1A1A1A] antialiased`}
       >
+        <Providers>
         {children}
+        </Providers>
       </body>
     </html>
   )

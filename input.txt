@@ -1,0 +1,27 @@
+My CFO of 6 years is demanding a 40% salary increase and new equity or he walks in 30 days. Our Series B closes in 11 weeks. The lead investor has a material adverse change clause. I 
+don't know if his job offer is real. The board doesn't know yet.
+
+
+
+Hi,
+
+Thanks for the update.
+
+From my end, **Priority 1 to 5 implementation is completed** and ready for production.
+
+Currently:
+
+* Google, GitHub, Discord login are working
+* **Facebook and Reddit are pending** as we are yet to receive the client ID and secret key
+
+Once I receive the Facebook and Reddit credentials, I will **push the complete code to production from my end immediately**.
+
+Please confirm once the credentials are shared.
+
+Regards,
+Rakshitha
+
+
+life core https://payhip.com/b/1digh
+life pro https://payhip.com/b/mPzJc
+life insider https://payhip.com/b/T3zC2

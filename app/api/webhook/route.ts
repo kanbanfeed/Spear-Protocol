@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const sig = headerList.get("stripe-signature")
 
   if (!sig) {
-    console.error("Webhook Error: Missing Stripe signature")
+    console.error("❌ Missing Stripe signature")
     return NextResponse.json({ error: "No signature" }, { status: 400 })
   }
 
@@ -25,22 +25,22 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
   } catch (err) {
-    console.error("Webhook signature verification failed:", err)
+    console.error("❌ Signature verification failed:", err)
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
-  console.log("Stripe webhook received:", event.type)
+  console.log("✅ Webhook received:", event.type)
 
   try {
-
     // ===============================
-    // CHECKOUT COMPLETED
+    // ✅ CHECKOUT COMPLETED
     // ===============================
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session
 
       let email = session.customer_email
 
+      // fallback if email missing
       if (!email && session.customer) {
         const customer = await stripe.customers.retrieve(
           session.customer as string
@@ -52,13 +52,16 @@ export async function POST(req: Request) {
       }
 
       if (!email) {
-        console.error("Webhook Error: Email not found in session")
+        console.error("❌ Email not found")
         return NextResponse.json({ received: true })
       }
 
       const referralUsed = session.metadata?.ref || null
+      const plan = session.metadata?.plan || "standard" // ✅ IMPORTANT
 
-      // Find or create user
+      // ===============================
+      // 🔍 FIND OR CREATE USER
+      // ===============================
       let user = await prisma.user.findUnique({
         where: { email },
       })
@@ -77,7 +80,9 @@ export async function POST(req: Request) {
         })
       }
 
-      // Save subscription info
+      // ===============================
+      // 💳 UPDATE SUBSCRIPTION
+      // ===============================
       if (session.subscription) {
         await prisma.user.update({
           where: { email },
@@ -85,11 +90,14 @@ export async function POST(req: Request) {
             stripeCustomerId: session.customer as string,
             stripeSubscriptionId: session.subscription as string,
             subscriptionStatus: "active",
+            plan: plan, // ✅ SAVE PLAN
           },
         })
       }
 
-      // Prevent duplicate purchase
+      // ===============================
+      // 🧾 PREVENT DUPLICATE PURCHASE
+      // ===============================
       const existingPurchase = await prisma.purchase.findUnique({
         where: { stripeSessionId: session.id },
       })
@@ -106,11 +114,13 @@ export async function POST(req: Request) {
         try {
           await sendWelcomeEmail(email)
         } catch (err) {
-          console.error("Welcome email failed:", err)
+          console.error("⚠️ Email failed:", err)
         }
       }
 
-      // Referral credit
+      // ===============================
+      // 🎁 REFERRAL CREDIT
+      // ===============================
       if (referralUsed) {
         const referrer = await prisma.user.findUnique({
           where: { referralCode: referralUsed },
@@ -130,11 +140,10 @@ export async function POST(req: Request) {
     }
 
     // ===============================
-    // SUBSCRIPTION UPDATED
+    // 🔄 SUBSCRIPTION UPDATED
     // ===============================
     if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object as Stripe.Subscription
-
       const customerId = subscription.customer as string
 
       const user = await prisma.user.findFirst({
@@ -152,11 +161,10 @@ export async function POST(req: Request) {
     }
 
     // ===============================
-    // SUBSCRIPTION CANCELLED
+    // ❌ SUBSCRIPTION CANCELLED
     // ===============================
     if (event.type === "customer.subscription.deleted") {
       const subscription = event.data.object as Stripe.Subscription
-
       const customerId = subscription.customer as string
 
       const user = await prisma.user.findFirst({
@@ -174,11 +182,10 @@ export async function POST(req: Request) {
     }
 
     // ===============================
-    // PAYMENT FAILED
+    // ⚠️ PAYMENT FAILED
     // ===============================
     if (event.type === "invoice.payment_failed") {
       const invoice = event.data.object as Stripe.Invoice
-
       const customerId = invoice.customer as string
 
       const user = await prisma.user.findFirst({
@@ -194,9 +201,8 @@ export async function POST(req: Request) {
         })
       }
     }
-
   } catch (error) {
-    console.error("Webhook processing error:", error)
+    console.error("❌ Webhook processing error:", error)
   }
 
   return NextResponse.json({ received: true })

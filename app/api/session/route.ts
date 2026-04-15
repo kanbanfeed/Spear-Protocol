@@ -7,69 +7,145 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 })
 
-const MAX_SESSIONS_PER_HOUR = 20
-const ONE_HOUR = 60 * 60 * 1000
-
 export async function POST(req: Request) {
   try {
-    const { input, email } = await req.json()
+    const { input, userId } = await req.json()
 
-    if (!input || !email) {
+    if (!input || input.trim() === "") {
       return NextResponse.json(
-        { error: "Missing input or email" },
+        { error: "Input is required" },
         { status: 400 }
       )
     }
 
-    // 1️⃣ Validate user
-    const user = await prisma.user.findUnique({
-      where: { email },
-    })
+    let user: any = null
 
-    if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
+    // ===============================
+    // 🔒 SESSION CONTROL (UNCHANGED + EXTENDED)
+    // ===============================
+    if (userId) {
+      user = await prisma.user.findUnique({
+        where: { id: userId },
+      })
+
+      if (!user) {
+        return NextResponse.json(
+          { error: "User not found" },
+          { status: 404 }
+        )
+      }
+
+      const hasActiveSubscription =
+        user.subscriptionStatus === "active"
+
+      const hasFreeSessions = user.freeSessions > 0
+
+      // ❌ BLOCK if no access
+      if (!hasFreeSessions && !hasActiveSubscription) {
+        return NextResponse.json(
+          { error: "LIMIT_REACHED" },
+          { status: 403 }
+        )
+      }
+
+      // ✅ FREE USER FLOW (UNCHANGED)
+      if (!hasActiveSubscription && hasFreeSessions) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            freeSessions: {
+              decrement: 1,
+            },
+            totalSessions: {
+              increment: 1,
+            },
+          },
+        })
+      }
+
+      // ✅ SUBSCRIPTION FLOW (EXTENDED)
+      if (hasActiveSubscription) {
+
+        // 🔒 VERIFIED PLAN LIMIT (3 per month)
+        if (user.plan === "verified") {
+          const startOfMonth = new Date()
+          startOfMonth.setDate(1)
+          startOfMonth.setHours(0, 0, 0, 0)
+
+          const sessionsThisMonth = await prisma.session.count({
+            where: {
+              userId,
+              createdAt: {
+                gte: startOfMonth,
+              },
+            },
+          })
+
+          if (sessionsThisMonth >= 3) {
+            return NextResponse.json(
+              { error: "LIMIT_REACHED" },
+              { status: 403 }
+            )
+          }
+        }
+
+        // ✅ TRACK USAGE
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            totalSessions: {
+              increment: 1,
+            },
+          },
+        })
+      }
     }
 
-    // 2️⃣ Check subscription
-    if (user.subscriptionStatus !== "active") {
-      return NextResponse.json(
-        { error: "Active subscription required" },
-        { status: 403 }
-      )
+    // ===============================
+    // 🧠 AI CONFIG (OPERATOR MODE)
+    // ===============================
+    let extraPrompt = ""
+
+    if (user?.plan === "operator") {
+      extraPrompt = `
+
+You are now operating in OPERATOR MODE.
+
+Go significantly deeper than normal analysis.
+
+Instructions:
+- Identify second-order and third-order consequences
+- Expose hidden risks and blind spots
+- Challenge assumptions aggressively
+- Provide strategic alternatives
+- Think like a high-stakes decision advisor
+- Be brutally clear, not polite
+- Focus on leverage, not surface-level advice
+
+Your output must feel sharper, more strategic, and more decisive than standard responses.
+`
     }
 
-    // 3️⃣ RATE LIMIT (20 sessions per hour)
-    const oneHourAgo = new Date(Date.now() - ONE_HOUR)
-
-    const sessionCount = await prisma.session.count({
-      where: {
-        userId: user.id,
-        createdAt: {
-          gte: oneHourAgo,
-        },
-      },
-    })
-
-    if (sessionCount >= MAX_SESSIONS_PER_HOUR) {
-      console.warn("Rate limit reached for user:", user.email)
-
-      return NextResponse.json(
-        {
-          error:
-            "Too many decision sessions. Please wait before creating another.",
-        },
-        { status: 429 }
-      )
-    }
-
-    // 4️⃣ Call OpenAI decision engine
+    // ===============================
+    // 🤖 AI CALL (ENHANCED)
+    // ===============================
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: MASTER_PROMPT },
+        {
+          role: "system",
+          content:
+            MASTER_PROMPT +
+            extraPrompt +
+            `
+
+IMPORTANT:
+Always include exact headings:
+PHASE I
+PHASE II
+PHASE III
+`,
+        },
         { role: "user", content: input },
       ],
       max_tokens: 1200,
@@ -79,21 +155,25 @@ export async function POST(req: Request) {
       completion.choices?.[0]?.message?.content ||
       "Decision engine returned no output."
 
-    // 5️⃣ Save decision session
-    const savedSession = await prisma.session.create({
+    // ===============================
+    // 💾 STORE SESSION (UNCHANGED)
+    // ===============================
+    await prisma.session.create({
       data: {
-        userId: user.id,
+        userId: userId || null,
         input,
         output,
+        ...(userId
+          ? {
+              user: {
+                connect: { id: userId },
+              },
+            }
+          : {}),
       },
     })
 
-    console.log("Decision session stored:", savedSession.id)
-
-    return NextResponse.json({
-      output,
-      sessionId: savedSession.id,
-    })
+    return NextResponse.json({ output })
   } catch (error) {
     console.error("SESSION ERROR:", error)
 

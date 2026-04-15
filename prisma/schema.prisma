@@ -9,28 +9,35 @@ datasource db {
 
 model User {
   id                    String    @id @default(cuid())
-  email                 String    @unique
+  email                 String?   @unique
   referralCode          String    @unique
   referralCredit        Int       @default(0)
   createdAt             DateTime  @default(now())
-
- 
+  platform              String?   // linkedin, google, x, etc.
+  name                  String?
+  jobTitle              String?
+  company               String?
+  profileImage          String?
+  username              String?   // github / x handle
+  freeSessions          Int       @default(1)
+  totalSessions         Int       @default(0)
+  sharedUrls            String[]  @default([])
   stripeCustomerId      String?
   stripeSubscriptionId  String?
   subscriptionStatus    String?   @default("inactive")
-
+  plan                  String?   @default("free")
   sessions              Session[]
   purchases             Purchase[]
 }
 
 model Session {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String?  
   input     String
   output    String
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model Purchase {
