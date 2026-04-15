@@ -58,18 +58,18 @@ export default function Home() {
             </div>
           </Link>
           
-          <Link
+          {/* <Link
             href="/dashboard"
             className="relative px-5 py-2 text-sm font-medium tracking-wide text-white/70 hover:text-white transition-all duration-300 group"
           >
             TRY FOR FREE NOW
             <span className="absolute bottom-0 left-0 w-0 h-px bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-          </Link>
+          </Link> */}
         </div>
       </nav>
 
       {/* SECTION 1 — ABOVE THE FOLD - Premium Hero */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 mt-24">
+      <section className="relative min-h-screen flex items-center justify-center px-6 mt-18">
         <div className="max-w-6xl mx-auto text-center relative z-10">
           {/* Animated Badge */}
           <div className="mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -133,30 +133,49 @@ export default function Home() {
             <p className="text-sm text-white/40 tracking-wide">
               One external strategic advisory session costs $4,000.
             </p>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
+            {/* <div className="flex items-center justify-center gap-3 flex-wrap">
               <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
                 $499
               </span>
               <span className="text-white/60 text-lg">per month.</span>
               <span className="text-white/40 text-sm">Cancel anytime.</span>
-            </div>
+            </div> */}
           </div>
 
           {/* DYNAMIC SEAT COUNTER */}
-          <div className="mt-2 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+          <div className="mt-2 mb-4 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
             <SeatCounter isPulsing={isPulsing} />
           </div>
 
           {/* Email Input with Premium Design */}
           
 
-          {/* CTA Button - Using StripeCheckoutButton Component */}
-          <div className="mt-6 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
-            <StripeCheckoutButton 
-              label="SECURE YOUR ACCESS"
-              email={email}
-            />
-          </div>
+          {/* DESKTOP FLOATING CTA */}
+<div className="fixed bottom-6 right-6 z-50 hidden md:block">
+  <button
+    onClick={() => window.location.href = "/dashboard"}
+    className="
+      bg-amber-500 text-black px-6 py-3 rounded-full font-bold
+      shadow-lg opacity-90 backdrop-blur
+      animate-[pulse_3s_infinite]
+    "
+  >
+    TRY FOR FREE NOW
+  </button>
+</div>
+
+{/* MOBILE FLOATING CTA */}
+<div className="fixed bottom-0 left-0 w-full p-4 bg-black/40 backdrop-blur md:hidden z-50">
+  <button
+    onClick={() => window.location.href = "/dashboard"}
+    className="
+      w-full bg-amber-500 text-black py-4 rounded-full font-bold
+      animate-[pulse_3s_infinite]
+    "
+  >
+    TRY FOR FREE NOW
+  </button>
+</div>
 
           <div className="mt-10 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-600">
             <div className="relative group">
@@ -181,6 +200,74 @@ export default function Home() {
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center">
             <div className="w-1 h-2 bg-amber-500 rounded-full mt-2 animate-pulse"></div>
+          </div>
+        </div>
+      </section>
+      <section className="relative py-20 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto text-center">
+
+          <h2 className="text-3xl md:text-4xl font-serif mb-12">
+            Access Options
+          </h2>
+
+          <div className="grid md:grid-cols-4 gap-6">
+
+            {/* FREE */}
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+              <h3 className="text-lg font-semibold">Free</h3>
+              <p className="mt-2 text-white/60 text-sm">
+                Your first decision. No login required.
+              </p>
+
+              <Link href="/dashboard">
+                <button className="mt-4 w-full bg-white text-black py-2 rounded-md">
+                  TRY FOR FREE
+                </button>
+              </Link>
+            </div>
+
+            {/* STANDARD */}
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+              <h3 className="text-lg font-semibold">Standard</h3>
+              <p className="mt-2 text-white/60 text-sm">
+                $20/month. Unlimited decisions.
+              </p>
+
+              <StripeCheckoutButton
+                label="GET STANDARD"
+                email={email}
+                plan="standard"
+              />
+            </div>
+
+            {/* OPERATOR */}
+            <div className="bg-amber-500 text-black p-6 rounded-xl scale-105 shadow-xl">
+              <h3 className="text-lg font-semibold">Operator</h3>
+              <p className="mt-2 text-sm">
+                $200/month. Deeper analysis.
+              </p>
+
+              <StripeCheckoutButton
+                label="GET OPERATOR"
+                email={email}
+                plan="operator"
+              />
+            </div>
+
+            {/* VERIFIED */}
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+              <h3 className="text-lg font-semibold">Verified</h3>
+              <p className="mt-2 text-white/60 text-sm">
+                $750/month. Expert reviewed.
+              </p>
+
+              <StripeCheckoutButton
+                label="GET VERIFIED"
+                email={email}
+                plan="verified"
+              />
+            </div>
+
           </div>
         </div>
       </section>
@@ -373,15 +460,22 @@ export default function Home() {
           </h2>
 
           <p className="text-white/60 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
-            Founding members lock in $499 per month permanently. When the founding round closes, new access opens at a higher price with no founding guarantee.
+            When the founding round closes, new access opens at a higher price with no founding guarantee.
           </p>
 
-          <div className="max-w-md mx-auto">
-            <StripeCheckoutButton 
-              label="SECURE YOUR ACCESS"
-              email={email}
-            />
-          </div>
+          <Link href="/dashboard">
+            <button className="
+               w-full overflow-hidden 
+        bg-gradient-to-r from-amber-500 to-amber-600 
+        text-black font-bold py-5 px-10 rounded-xl text-xl md:text-xl
+        animate-[pulse_3s_infinite]
+        transition-all duration-300 hover:scale-[1.02] 
+        hover:shadow-2xl hover:shadow-amber-500/30 
+        active:scale-[0.98]
+            ">
+              TRY FOR FREE NOW
+            </button>
+          </Link>
         </div>
       </section>
 

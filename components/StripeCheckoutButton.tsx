@@ -3,9 +3,11 @@
 export default function StripeCheckoutButton({
   label = "SECURE PRIVATE ACCESS",
   email,
+  plan,
 }: {
   label?: string
   email: string
+  plan?: string
 }) {
 
   async function handleCheckout() {
@@ -19,7 +21,7 @@ export default function StripeCheckoutButton({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, plan }),
     })
 
     const data = await res.json()
@@ -35,10 +37,11 @@ export default function StripeCheckoutButton({
       className="
         group relative w-full overflow-hidden 
         bg-gradient-to-r from-amber-500 to-amber-600 
-        text-black font-bold py-3 px-8 rounded-xl text-lg 
+        text-black font-bold py-2 px-6 rounded-xl text-xl md:text-xl
+        animate-[pulse_3s_infinite]
         transition-all duration-300 hover:scale-[1.02] 
         hover:shadow-2xl hover:shadow-amber-500/30 
-        active:scale-[0.98]
+        active:scale-[0.98] mt-4
       "
     >
       <span className="relative z-10 flex items-center justify-center gap-2">
@@ -57,6 +60,7 @@ export default function StripeCheckoutButton({
           />
         </svg>
       </span>
+
       <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </button>
   )
