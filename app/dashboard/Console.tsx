@@ -21,6 +21,7 @@ export default function Console({
   email,
   sessions,
   userId,
+  
 }: {
   email: string
   sessions: any[]
@@ -56,7 +57,14 @@ export default function Console({
     })
   }
 }, [session])
-
+  const referralLink =
+  session?.user
+    ? `${process.env.NEXT_PUBLIC_URL}/ref/${encodeURIComponent(
+        session.user.username ||
+        session.user.referralCode ||
+        ""
+      )}`
+    : ""
   const selectedSession = sessions.find(
     (s) => s.id === selectedId
   )
@@ -81,6 +89,25 @@ export default function Console({
   const [profileImage, setProfileImage] = useState("")
   const [shareUrl, setShareUrl] = useState("")
   const [showShareGate, setShowShareGate] = useState(false)
+  const [showEmailPopup, setShowEmailPopup] = useState(false)
+const [sessionId, setSessionId] = useState<string | null>(null)
+useEffect(() => {
+  const paymentStatus = searchParams.get("payment")
+
+  if (paymentStatus === "success") {
+    setShowEmailPopup(true)
+  }
+}, [searchParams])
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const url = new URL(window.location.href)
+    const id = url.searchParams.get("session_id")
+    setSessionId(id)
+  }
+}, [])
+  
+  
   
   const isProcessing =
     stage === "analyzing" || stage === "rearchitecting"
@@ -477,6 +504,7 @@ const handleCheckout = async (plan: string) => {
   alert("Please login first")
   return
 }
+const referralCode = localStorage.getItem("referralCode")
   try {
     const res = await fetch("/api/create-checkout", {
       method: "POST",
@@ -487,6 +515,7 @@ const handleCheckout = async (plan: string) => {
         email: session?.user.email,
         plan,
         userId: session?.user.id,
+        referralCode,
       }),
     })
 
@@ -677,6 +706,31 @@ const handleShareVerify = async () => {
             </p>
           </div>
         )}
+
+        <p className="text-xs text-gray-500 mb-2">
+  Share your link. When someone upgrades through your link — you get that tier free plus 30% of what they pay. Every month. Forever.
+</p>
+        <div className="border p-4 rounded-xl mt-6">
+  <p className="text-sm font-medium mb-2">Your Referral Link</p>
+
+  <div className="flex gap-2">
+    <input
+      value={referralLink}
+      readOnly
+      className="flex-1 border p-2 text-sm rounded"
+    />
+
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(referralLink)
+        alert("Referral link copied")
+      }}
+      className="bg-black text-white px-4 text-sm rounded"
+    >
+      Copy
+    </button>
+  </div>
+</div>
 
         <div className="relative">
 
@@ -1002,7 +1056,60 @@ const handleShareVerify = async () => {
               )}
               </div>
               )}
+{showEmailPopup && (
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-xl w-full max-w-md text-black">
+      <h2 className="text-lg font-bold mb-4">
+        Confirm your email to activate access
+      </h2>
 
+      <input
+        type="email"
+        placeholder="Enter your email"
+        className="w-full border p-2 rounded mb-4"
+        id="paymentEmail"
+      />
+
+      <button
+        onClick={async () => {
+  if (!sessionId) {
+    alert("Invalid session. Please retry payment.")
+    return
+  }
+
+  const email = (document.getElementById("paymentEmail") as HTMLInputElement).value
+
+  if (!email) {
+    alert("Please enter email")
+    return
+  }
+
+  const res = await fetch("/api/activate-subscription", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, sessionId }),
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    alert(data.error || "Activation failed")
+    return
+  }
+
+  alert("Subscription activated successfully")
+
+  setShowEmailPopup(false)
+}}
+        className="w-full bg-amber-500 text-black py-2 rounded"
+      >
+        Confirm & Activate
+      </button>
+    </div>
+  </div>
+)}
         </div>
       </div>
     </div>

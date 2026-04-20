@@ -1,5 +1,6 @@
 import Stripe from "stripe"
 import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -21,6 +22,24 @@ export async function POST(req: Request) {
     //   )
     // }
 
+    let finalReferralCode = referralCode
+
+// 🔁 if username passed → convert to referralCode
+if (referralCode) {
+  const refUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { referralCode },
+        { username: referralCode },
+      ],
+    },
+  })
+
+  if (refUser) {
+    finalReferralCode = refUser.referralCode
+  }
+}
+
     if (!plan || !prices[plan]) {
       return NextResponse.json(
         { error: "Invalid plan selected" },
@@ -39,7 +58,7 @@ export async function POST(req: Request) {
       metadata: {
         userId: userId || "guest",
         plan,
-        ref: referralCode || "",
+        ref: finalReferralCode || "",
       },
 
       line_items: [
@@ -58,7 +77,7 @@ export async function POST(req: Request) {
         },
       ],
 
-      success_url: `${process.env.NEXT_PUBLIC_URL}/dashboard?payment=success`,
+      success_url: `${process.env.NEXT_PUBLIC_URL}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_URL}/dashboard?payment=cancel`,
     })
 

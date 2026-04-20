@@ -105,12 +105,29 @@ export const authOptions: AuthOptions = {
       }
     },
 
-    async session({ session, token }: any) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.id = user.id // ✅ store DB id in token
       }
-      return session
+      return token
     },
+    async session({ session, token }: any) {
+  if (session.user && token.id) {
+  const user = await prisma.user.findUnique({
+    where: { id: token.id as string },
+  })
+   
+
+    if (user) {
+      session.user.id = user.id
+      session.user.referralCode = user.referralCode || "" // ✅ FIX
+      session.user.referralCredit = user.referralCredit || 0
+      session.user.username = user.username || null
+    }
+  }
+
+  return session
+}
   },
 
   session: {

@@ -36,9 +36,31 @@ export async function POST(req: Request) {
     // ✅ CHECKOUT COMPLETED
     // ===============================
     if (event.type === "checkout.session.completed") {
+      
       const session = event.data.object as Stripe.Checkout.Session
 
       let email = session.customer_email
+        const referralCode = session.metadata?.ref
+
+        if (referralCode) {
+          const refUser = await prisma.user.findUnique({
+            where: { referralCode },
+          })
+
+          if (refUser) {
+            // ❌ prevent self referral
+            if (refUser.email !== session.customer_email) {
+              await prisma.user.update({
+                where: { id: refUser.id },
+                data: {
+                  referralCredit: {
+                    increment: 1,
+                  },
+                },
+              })
+            }
+          }
+        }
 
       // fallback if email missing
       if (!email && session.customer) {
@@ -89,7 +111,7 @@ export async function POST(req: Request) {
           data: {
             stripeCustomerId: session.customer as string,
             stripeSubscriptionId: session.subscription as string,
-            subscriptionStatus: "active",
+            subscriptionStatus: "pending",
             plan: plan, // ✅ SAVE PLAN
           },
         })
@@ -107,7 +129,7 @@ export async function POST(req: Request) {
           data: {
             stripeSessionId: session.id,
             userId: user.id,
-            referralUsed,
+            referralUsed: referralCode || null,
           },
         })
 
@@ -122,21 +144,31 @@ export async function POST(req: Request) {
       // 🎁 REFERRAL CREDIT
       // ===============================
       if (referralUsed) {
-        const referrer = await prisma.user.findUnique({
-          where: { referralCode: referralUsed },
-        })
+  const referrer = await prisma.user.findUnique({
+    where: { referralCode: referralUsed },
+  })
 
-        if (referrer) {
-          await prisma.user.update({
-            where: { id: referrer.id },
-            data: {
-              referralCredit: {
-                increment: 30,
-              },
-            },
-          })
-        }
-      }
+  if (referrer && referrer.email !== email) {
+    // 🎯 1. UPGRADE REFERRER TO SAME PLAN
+    await prisma.user.update({
+      where: { id: referrer.id },
+      data: {
+        plan: plan,
+        subscriptionStatus: "active",
+      },
+    })
+
+    // 🎯 2. ADD 30% CREDIT (initial)
+    await prisma.user.update({
+      where: { id: referrer.id },
+      data: {
+        referralCredit: {
+          increment: 30,
+        },
+      },
+    })
+  }
+}
     }
 
     // ===============================
@@ -180,6 +212,40 @@ export async function POST(req: Request) {
         })
       }
     }
+
+    if (event.type === "invoice.payment_succeeded") {
+  const invoice = event.data.object as Stripe.Invoice
+
+  const customerId = invoice.customer as string
+
+  const user = await prisma.user.findFirst({
+    where: { stripeCustomerId: customerId },
+  })
+
+  if (!user) return NextResponse.json({ received: true })
+
+  // find purchase
+  const purchase = await prisma.purchase.findFirst({
+    where: { userId: user.id },
+  })
+
+  if (!purchase?.referralUsed) return NextResponse.json({ received: true })
+
+  const referrer = await prisma.user.findUnique({
+    where: { referralCode: purchase.referralUsed },
+  })
+
+  if (referrer) {
+    await prisma.user.update({
+      where: { id: referrer.id },
+      data: {
+        referralCredit: {
+          increment: 30, // monthly recurring
+        },
+      },
+    })
+  }
+}
 
     // ===============================
     // ⚠️ PAYMENT FAILED

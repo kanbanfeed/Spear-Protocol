@@ -159,19 +159,18 @@ PHASE III
     // 💾 STORE SESSION (UNCHANGED)
     // ===============================
     await prisma.session.create({
-      data: {
-        userId: userId || null,
-        input,
-        output,
-        ...(userId
-          ? {
-              user: {
-                connect: { id: userId },
-              },
-            }
-          : {}),
-      },
-    })
+  data: {
+    input,
+    output,
+    ...(userId
+      ? {
+          user: {
+            connect: { id: userId },
+          },
+        }
+      : {}),
+  },
+})
 
     return NextResponse.json({ output })
   } catch (error) {

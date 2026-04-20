@@ -9,7 +9,16 @@ import StripeCheckoutButton from "@/components/StripeCheckoutButton" // Adjust p
 export default function Home() {
   const [email, setEmail] = useState("")
   const [isPulsing, setIsPulsing] = useState(false)
+  useEffect(() => {
+  if (typeof window !== "undefined") {
+    const url = new URL(window.location.href)
+    const ref = url.searchParams.get("ref")
 
+    if (ref) {
+      localStorage.setItem("referralCode", ref)
+    }
+  }
+}, [])
   // Simulate real-time seat counter pulsing effect
   useEffect(() => {
     const interval = setInterval(() => {
