@@ -151,33 +151,33 @@ export default function Home() {
           
 
           {/* DESKTOP FLOATING CTA */}
-<div className="fixed bottom-6 right-6 z-50 hidden md:block">
-  <button
-    onClick={() => window.location.href = "/dashboard"}
-    className="
-      bg-amber-500 text-black px-6 py-3 rounded-full font-bold
-      shadow-lg opacity-90 backdrop-blur
-      animate-[pulse_3s_infinite]
-    "
-  >
-    TRY FOR FREE NOW
-  </button>
-</div>
+          <div className="fixed bottom-6 right-6 z-50 hidden md:block">
+            <button
+              onClick={() => window.location.href = "/dashboard"}
+              className="
+                bg-amber-500 text-black px-6 py-3 rounded-full font-bold
+                shadow-lg opacity-90 backdrop-blur
+                animate-[pulse_3s_infinite]
+              "
+            >
+              TRY FOR FREE NOW
+            </button>
+          </div>
 
-{/* MOBILE FLOATING CTA */}
-<div className="fixed bottom-0 left-0 w-full p-4 bg-black/40 backdrop-blur md:hidden z-50">
-  <button
-    onClick={() => window.location.href = "/dashboard"}
-    className="
-      w-full bg-amber-500 text-black py-4 rounded-full font-bold
-      animate-[pulse_3s_infinite]
-    "
-  >
-    TRY FOR FREE NOW
-  </button>
-</div>
+          {/* MOBILE FLOATING CTA */}
+          <div className="fixed bottom-0 left-0 w-full p-4 bg-black/40 backdrop-blur md:hidden z-50">
+            <button
+              onClick={() => window.location.href = "/dashboard"}
+              className="
+                w-full bg-amber-500 text-black py-4 rounded-full font-bold
+                animate-[pulse_3s_infinite]
+              "
+            >
+              TRY FOR FREE NOW
+            </button>
+          </div>
 
-          <div className="mt-10 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-600">
+          {/* <div className="mt-10 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-600">
             <div className="relative group">
               <input
                 type="email"
@@ -188,7 +188,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-500/0 via-amber-500/0 to-amber-500/0 group-focus-within:from-amber-500/10 group-focus-within:via-amber-500/5 group-focus-within:to-transparent pointer-events-none transition-all duration-500"></div>
             </div>
-          </div>
+          </div> */}
 
           {/* Small Muted Text */}
           <p className="text-xs text-white/30 mt-6 animate-in fade-in duration-700 delay-800">
@@ -235,7 +235,6 @@ export default function Home() {
 
               <StripeCheckoutButton
                 label="GET STANDARD"
-                email={email}
                 plan="standard"
               />
             </div>
@@ -249,7 +248,6 @@ export default function Home() {
 
               <StripeCheckoutButton
                 label="GET OPERATOR"
-                email={email}
                 plan="operator"
               />
             </div>
@@ -263,7 +261,6 @@ export default function Home() {
 
               <StripeCheckoutButton
                 label="GET VERIFIED"
-                email={email}
                 plan="verified"
               />
             </div>

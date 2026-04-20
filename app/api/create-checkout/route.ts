@@ -14,12 +14,12 @@ export async function POST(req: Request) {
     const { email, plan, userId, referralCode } = await req.json()
 
     //  Validation
-    if (!email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      )
-    }
+    // if (!email) {
+    //   return NextResponse.json(
+    //     { error: "Email is required" },
+    //     { status: 400 }
+    //   )
+    // }
 
     if (!plan || !prices[plan]) {
       return NextResponse.json(

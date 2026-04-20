@@ -2,26 +2,24 @@
 
 export default function StripeCheckoutButton({
   label = "SECURE PRIVATE ACCESS",
-  email,
   plan,
 }: {
   label?: string
-  email: string
   plan?: string
 }) {
 
   async function handleCheckout() {
-    if (!email) {
-      alert("Please enter your email")
-      return
-    }
+    // if (!email) {
+    //   alert("Please enter your email")
+    //   return
+    // }
 
     const res = await fetch("/api/create-checkout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, plan }),
+      body: JSON.stringify({ plan }),
     })
 
     const data = await res.json()
