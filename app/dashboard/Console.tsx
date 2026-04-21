@@ -91,6 +91,15 @@ export default function Console({
   const [showShareGate, setShowShareGate] = useState(false)
   const [showEmailPopup, setShowEmailPopup] = useState(false)
 const [sessionId, setSessionId] = useState<string | null>(null)
+const [storedRef, setStoredRef] = useState<string | null>(null)
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const ref = localStorage.getItem("referralCode")
+    setStoredRef(ref)
+  }
+}, [])
+
 useEffect(() => {
   const paymentStatus = searchParams.get("payment")
 
@@ -708,29 +717,34 @@ const handleShareVerify = async () => {
         )}
 
         <p className="text-xs text-gray-500 mb-2">
-  Share your link. When someone upgrades through your link — you get that tier free plus 30% of what they pay. Every month. Forever.
-</p>
+          Share your link. When someone upgrades through your link — you get that tier free plus 30% of what they pay. Every month. Forever.
+        </p>
+        {storedRef && (
+          <p className="text-xs text-green-600 mb-2">
+            You were invited via a referral link ✔
+          </p>
+        )}
         <div className="border p-4 rounded-xl mt-6">
-  <p className="text-sm font-medium mb-2">Your Referral Link</p>
+          <p className="text-sm font-medium mb-2">Your Referral Link</p>
 
-  <div className="flex gap-2">
-    <input
-      value={referralLink}
-      readOnly
-      className="flex-1 border p-2 text-sm rounded"
-    />
+          <div className="flex gap-2">
+            <input
+              value={referralLink}
+              readOnly
+              className="flex-1 border p-2 text-sm rounded"
+            />
 
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(referralLink)
-        alert("Referral link copied")
-      }}
-      className="bg-black text-white px-4 text-sm rounded"
-    >
-      Copy
-    </button>
-  </div>
-</div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(referralLink)
+                alert("Referral link copied")
+              }}
+              className="bg-black text-white px-4 text-sm rounded"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
 
         <div className="relative">
 
