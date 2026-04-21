@@ -107,7 +107,7 @@ export const authOptions: AuthOptions = {
 
     async jwt({ token, user }: any) {
       if (user) {
-        token.id = user.id // ✅ store DB id in token
+        token.id = user.id // store DB id in token
       }
       return token
     },
@@ -120,9 +120,12 @@ export const authOptions: AuthOptions = {
 
     if (user) {
       session.user.id = user.id
-      session.user.referralCode = user.referralCode || "" // ✅ FIX
+      session.user.referralCode = user.referralCode || "" // FIX
       session.user.referralCredit = user.referralCredit || 0
       session.user.username = user.username || null
+      session.user.freeSessions = user.freeSessions || 0
+      session.user.totalSessions = user.totalSessions || 0
+      session.user.sessionsEarned = user.sharedUrls?.length || 0
     }
   }
 

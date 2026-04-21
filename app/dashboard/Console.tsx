@@ -590,6 +590,7 @@ const handleShareVerify = async () => {
     }
 
     setShareSuccess(true)
+    window.location.reload()
     setShareUrl("")
     setGuestRuns(1)
     localStorage.removeItem("guest_used")
@@ -719,6 +720,28 @@ const handleShareVerify = async () => {
         <p className="text-xs text-gray-500 mb-2">
           Share your link. When someone upgrades through your link — you get that tier free plus 30% of what they pay. Every month. Forever.
         </p>
+        <div className="border p-4 rounded-xl mt-4 space-y-1">
+          <p className="text-sm">
+            Free sessions remaining:{" "}
+            <span className="font-semibold">
+              {session?.user?.freeSessions ?? 0}
+            </span>
+          </p>
+
+          <p className="text-sm">
+            Sessions earned through sharing:{" "}
+            <span className="font-semibold">
+              {session?.user?.sessionsEarned ?? 0}
+            </span>
+          </p>
+
+          <p className="text-sm">
+            Total sessions completed:{" "}
+            <span className="font-semibold">
+              {session?.user?.totalSessions ?? 0}
+            </span>
+          </p>
+        </div>
         {storedRef && (
           <p className="text-xs text-green-600 mb-2">
             You were invited via a referral link ✔

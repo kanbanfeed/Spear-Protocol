@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         )
       }
 
-      // ✅ FREE USER FLOW (UNCHANGED)
+      // FREE USER FLOW (UNCHANGED)
       if (!hasActiveSubscription && hasFreeSessions) {
         await prisma.user.update({
           where: { id: userId },
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         })
       }
 
-      // ✅ SUBSCRIPTION FLOW (EXTENDED)
+      // SUBSCRIPTION FLOW (EXTENDED)
       if (hasActiveSubscription) {
 
         // 🔒 VERIFIED PLAN LIMIT (3 per month)
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
           }
         }
 
-        // ✅ TRACK USAGE
+        // TRACK USAGE
         await prisma.user.update({
           where: { id: userId },
           data: {

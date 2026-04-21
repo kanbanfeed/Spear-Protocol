@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   try {
     const { email, sessionId } = await req.json()
 
-    // ✅ 0. Basic validation
+    // 0. Basic validation
     if (!email || !sessionId) {
       return NextResponse.json(
         { error: "Missing email or session information" },
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 1. Verify Stripe session
+    // 1. Verify Stripe session
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     if (!session || session.payment_status !== "paid") {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 2. Get correct email from Stripe (IMPORTANT FIX)
+    // 2. Get correct email from Stripe (IMPORTANT FIX)
     const stripeEmail =
       session.customer_email ||
       session.customer_details?.email ||
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 3. Ensure session exists in DB (webhook validation)
+    // 3. Ensure session exists in DB (webhook validation)
     const purchase = await prisma.purchase.findUnique({
       where: { stripeSessionId: sessionId },
     })
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 4. Create or update user
+    // 4. Create or update user
     let user = await prisma.user.findUnique({
       where: { email: cleanUserEmail },
     })

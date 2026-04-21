@@ -29,11 +29,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
-  console.log("✅ Webhook received:", event.type)
+  console.log("Webhook received:", event.type)
 
   try {
     // ===============================
-    // ✅ CHECKOUT COMPLETED
+    // CHECKOUT COMPLETED
     // ===============================
     if (event.type === "checkout.session.completed") {
       
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       }
 
       const referralUsed = session.metadata?.ref || null
-      const plan = session.metadata?.plan || "standard" // ✅ IMPORTANT
+      const plan = session.metadata?.plan || "standard" // IMPORTANT
 
       // ===============================
       // 🔍 FIND OR CREATE USER
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
             stripeCustomerId: session.customer as string,
             stripeSubscriptionId: session.subscription as string,
             subscriptionStatus: "pending",
-            plan: plan, // ✅ SAVE PLAN
+            plan: plan, // SAVE PLAN
           },
         })
       }
