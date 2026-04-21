@@ -142,22 +142,13 @@ export default function Home() {
             <p className="text-sm text-white/40 tracking-wide">
               One external strategic advisory session costs $4,000.
             </p>
-            {/* <div className="flex items-center justify-center gap-3 flex-wrap">
-              <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                $499
-              </span>
-              <span className="text-white/60 text-lg">per month.</span>
-              <span className="text-white/40 text-sm">Cancel anytime.</span>
-            </div> */}
+            
           </div>
 
           {/* DYNAMIC SEAT COUNTER */}
           <div className="mt-2 mb-4 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
             <SeatCounter isPulsing={isPulsing} />
-          </div>
-
-          {/* Email Input with Premium Design */}
-          
+          </div>          
 
           {/* DESKTOP FLOATING CTA */}
           <div className="fixed bottom-6 right-6 z-50 hidden md:block">
@@ -186,19 +177,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* <div className="mt-10 max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-600">
-            <div className="relative group">
-              <input
-                type="email"
-                placeholder="Enter your email to secure access"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all duration-300"
-              />
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-500/0 via-amber-500/0 to-amber-500/0 group-focus-within:from-amber-500/10 group-focus-within:via-amber-500/5 group-focus-within:to-transparent pointer-events-none transition-all duration-500"></div>
-            </div>
-          </div> */}
-
           {/* Small Muted Text */}
           <p className="text-xs text-white/30 mt-6 animate-in fade-in duration-700 delay-800">
             Used by operators under real pressure. Not a productivity tool.
@@ -212,6 +190,79 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <div className="mt-16 mb-12 max-w-4xl mx-auto">
+
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 space-y-6">
+
+          <h2 className="text-xl md:text-2xl font-semibold text-center text-white">
+            Monthly SPEAR Arena is now live
+          </h2>
+
+          <p className="text-white/70 text-center leading-relaxed">
+            Every paid subscriber is automatically entered for the{" "}
+            <span className="text-amber-400 font-semibold">
+              $25,000 non-dilutive first cheque
+            </span>{" "}
+            from Crowbar Ventures.
+          </p>
+
+          <div className="space-y-2 text-white/80">
+            <p className="text-center font-medium text-amber-400">
+              Better odds than YC, Shark Tank or Dragon’s Den
+            </p>
+
+            <ul className="list-disc ml-6 space-y-1 text-white/70">
+              <li>YC acceptance rate: as low as 0.6% (Summer 2025 batch, public reports)</li>
+              <li>Shark Tank / Dragon’s Den appearance odds: &lt;0.5%</li>
+            </ul>
+          </div>
+
+          <p className="text-white/70 leading-relaxed">
+            With SPEAR you pay $20–$750 and you are{" "}
+            <span className="text-amber-400 font-semibold">in</span>.  
+            No application hell. No months of waiting.
+          </p>
+
+          <div className="space-y-3">
+            <p className="font-medium text-white">How the SPEAR Arena works</p>
+
+            <ul className="list-disc ml-6 space-y-1 text-white/70">
+              <li>One winner every month gets the $25k first cheque (6–8% equity, ~$357k post-money valuation).</li>
+              <li>Winner chosen purely by SPEAR score: Kill Point clarity + Path A courage + decision velocity.</li>
+              <li>A $20 Standard user with the single best decision can beat everyone.</li>
+              <li>Prize only pays when monthly revenue ≥ $28k. If not, it rolls over → bigger jackpot.</li>
+              <li>33% of every SPEAR dollar automatically recycles into the next cheque(s).</li>
+            </ul>
+          </div>
+
+          <div className="space-y-3">
+            <p className="font-medium text-white">Your odds (weighted by tier)</p>
+
+            <div className="space-y-2 text-white/70">
+              <p>
+                <span className="text-white font-semibold">Standard — $20/month</span><br />
+                Unlimited decisions. <span className="text-amber-400 font-semibold">1x odds</span>.
+              </p>
+
+              <p>
+                <span className="text-white font-semibold">Operator — $200/month</span><br />
+                Unlimited + memory + deeper Kill Points. <span className="text-amber-400 font-semibold">15x odds.</span>
+              </p>
+
+              <p>
+                <span className="text-white font-semibold">Verified — $750/month</span><br />
+                Expert reviews + intros + pitch architect. <span className="text-amber-400 font-semibold">50x odds.</span>
+              </p>
+            </div>
+          </div>
+
+          <p className="text-white/60 text-sm text-center">
+            Free tier remains exactly as live: Phase I & II full instantly, Phase III blurred until login.
+            Upgrade and you’re in the Arena.
+          </p>
+
+        </div>
+      </div>
       <section className="relative py-20 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto text-center">
 

@@ -705,7 +705,7 @@ const handleShareVerify = async () => {
 
   return (
     
-    <div className="space-y-12">
+    <div className="space-y-8">
       <div id="recaptcha-container"></div>
       <div className="relative bg-white border border-gray-200 rounded-2xl p-8 space-y-6 overflow-hidden">
 
@@ -717,58 +717,7 @@ const handleShareVerify = async () => {
           </div>
         )}
 
-        <p className="text-xs text-gray-500 mb-2">
-          Share your link. When someone upgrades through your link — you get that tier free plus 30% of what they pay. Every month. Forever.
-        </p>
-        <div className="border p-4 rounded-xl mt-4 space-y-1">
-          <p className="text-sm">
-            Free sessions remaining:{" "}
-            <span className="font-semibold">
-              {session?.user?.freeSessions ?? 0}
-            </span>
-          </p>
-
-          <p className="text-sm">
-            Sessions earned through sharing:{" "}
-            <span className="font-semibold">
-              {session?.user?.sessionsEarned ?? 0}
-            </span>
-          </p>
-
-          <p className="text-sm">
-            Total sessions completed:{" "}
-            <span className="font-semibold">
-              {session?.user?.totalSessions ?? 0}
-            </span>
-          </p>
-        </div>
-        {storedRef && (
-          <p className="text-xs text-green-600 mb-2">
-            You were invited via a referral link ✔
-          </p>
-        )}
-        <div className="border p-4 rounded-xl mt-6">
-          <p className="text-sm font-medium mb-2">Your Referral Link</p>
-
-          <div className="flex gap-2">
-            <input
-              value={referralLink}
-              readOnly
-              className="flex-1 border p-2 text-sm rounded"
-            />
-
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(referralLink)
-                alert("Referral link copied")
-              }}
-              className="bg-black text-white px-4 text-sm rounded"
-            >
-              Copy
-            </button>
-          </div>
-        </div>
-
+      
         <div className="relative">
 
           {/*  TEXTAREA + MIC */}
@@ -824,6 +773,16 @@ const handleShareVerify = async () => {
           </button>
           <p className="text-s text-gray-400 mt-2 text-center">
             No card. No login. Just clarity.
+          </p>
+          <p className="text-xs text-gray-400 text-center mt-3 leading-relaxed">
+            By using SPEAR Protocol, you agree to our{" "}
+            <a
+              href="/terms"
+              target="_blank"
+              className="underline hover:text-black transition"
+            >
+              Terms and Privacy of Service.
+            </a>{" "}
           </p>
           {shareSuccess && (
             <p className="text-green-600 text-center mt-2">
@@ -882,7 +841,7 @@ const handleShareVerify = async () => {
                   </div>
                   
 
-                  {/* 📊 PROGRESS BAR */}
+                  {/*  PROGRESS BAR */}
                   {isPlaying && (
                     <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
                       <div

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma"
 import HeaderAuth from "./HeaderAuth"
 import Console from "./Console"
 import Image from "next/image"
+import Sidebar from "./Sidebar"
 import Link from "next/link"
 
 
@@ -25,8 +26,8 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center px-6">
-      <div className="w-full max-w-4xl">
+    <div className="min-h-screen bg-[#F9F9F9] px-4 lg:px-10 py-6">
+      <div className="w-full max-w-7xl mx-auto">
 
         {/* HEADER */}
         <div className="flex items-center justify-between mb-4">
@@ -57,12 +58,21 @@ export default async function Dashboard() {
           <HeaderAuth />
         </div>
 
-        {/*  PASS REAL USER DATA */}
-        <Console
-          email={session?.user?.email || ""}
-          sessions={userSessions}
-          userId={session?.user?.id || "guest"}
-        />
+        <div className="flex flex-col lg:flex-row gap-6">
+
+          {/* LEFT */}
+          <div className="flex-1">
+            <Console
+              email={session?.user?.email || ""}
+              sessions={userSessions}
+              userId={session?.user?.id || "guest"}
+            />
+          </div>
+
+          {/* RIGHT */}
+          <Sidebar />
+
+        </div>
 
       </div>
     </div>
