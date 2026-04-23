@@ -18,7 +18,7 @@ model User {
   jobTitle              String?
   company               String?
   profileImage          String?
-  username              String?   // github / x handle
+  username              String?   @unique   // github / x handle
   freeSessions          Int       @default(1)
   totalSessions         Int       @default(0)
   sharedUrls            String[]  @default([])
