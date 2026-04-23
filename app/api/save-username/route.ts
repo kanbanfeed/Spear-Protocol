@@ -3,44 +3,42 @@ import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
   try {
-    const { username, userId } = await req.json()
+    const { userId, username } = await req.json()
 
-    // ✅ AUTH CHECK
-    if (!userId) {
+    if (!userId || !username) {
       return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
-
-    // ✅ VALIDATION
-    if (!/^[a-zA-Z0-9]{4,20}$/.test(username)) {
-      return NextResponse.json(
-        { error: "Username must be 4–20 characters (letters & numbers only)" },
+        { error: "Missing data" },
         { status: 400 }
       )
     }
 
-    // ✅ CHECK EXISTING
-    const exists = await prisma.user.findFirst({
+    // basic validation
+    if (!/^[a-zA-Z0-9]{4,20}$/.test(username)) {
+      return NextResponse.json(
+        { error: "Username must be 4-20 alphanumeric characters" },
+        { status: 400 }
+      )
+    }
+
+    // check uniqueness
+    const existing = await prisma.user.findUnique({
       where: { username },
     })
 
-    if (exists) {
+    if (existing) {
       return NextResponse.json(
         { error: "Username already taken" },
         { status: 400 }
       )
     }
 
-    // ✅ UPDATE USER
+    // update user
     await prisma.user.update({
       where: { id: userId },
       data: { username },
     })
 
     return NextResponse.json({ success: true })
-
   } catch (error) {
     console.error("USERNAME SAVE ERROR:", error)
 
